@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Maatu · powered by Gnani</title>
+  <link rel="icon" type="image/svg+xml" href="/brand/maatu-mark.svg">
+  <script src="/theme.js"></script>
+  <!-- Inter, close to the clean geometric sans of Gnani's console. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/stage.css">
+</head>
+<body>
+  <header class="head">
+    <div>
+      <!-- Lockup: the mark, with the name and "powered by" stacked beside it. -->
+      <div class="brand">
+        <img class="mark" src="/brand/maatu-mark.svg" alt="" width="56" height="56">
+        <div>
+          <h1>Maatu</h1>
+          <p class="powered">powered by Gnani.ai</p>
+        </div>
+      </div>
+    </div>
+    <span class="pill" id="mode">connecting…</span>
+  </header>
+
+  <main class="stage">
+    <figure class="device cust">
+      <figcaption>Customer</figcaption>
+      <iframe src="/phone.html?role=customer&amp;lang=kn-IN" title="Customer phone" allow="microphone; autoplay"></iframe>
+    </figure>
+
+    <!-- Shows the two people are in different places; an orb travels along
+         it each time a message is delivered. -->
+    <div class="route">
+      <div class="route-line" aria-hidden="true">
+        <span class="end" data-icon="pin"></span>
+        <span class="track"><i class="traveller" id="traveller"></i></span>
+        <span class="end" data-icon="auto"></span>
+      </div>
+      <span class="dist">1.2 km apart</span>
+      <!-- The one sentence that explains the picture, right where people look. -->
+      <p class="caption">The customer speaks their own language. Every voice message arrives translated, in the driver's language.</p>
+    </div>
+
+    <figure class="device rider">
+      <figcaption>Rider</figcaption>
+      <iframe src="/phone.html?role=rider&amp;lang=te-IN" title="Rider phone" allow="microphone; autoplay"></iframe>
+    </figure>
+
+    <aside class="panel">
+      <!-- The two fold-outs share a name, so opening one closes the other and
+           the middle column keeps its proportions. -->
+      <div class="folds">
+      <details class="fold pipe-card" name="side" open>
+        <summary>Pipeline</summary>
+        <div class="pager" id="pager" hidden>
+          <button type="button" id="newer" aria-label="Newer messages">‹</button>
+          <span id="pageLabel">1 / 1</span>
+          <button type="button" id="older" aria-label="Older messages">›</button>
+        </div>
+        <p class="hint" id="logEmpty">Send a voice message or a quick chat to see each step.</p>
+        <ol class="log" id="log"></ol>
+      </details>
+
+      <!-- What a ride app's developers add to their own backend to use Maatu.
+           Folded away so the demo stays about the two people. -->
+      <details class="fold code-card" name="side">
+        <summary>&lt;/&gt; How Rapido plugs it in</summary>
+        <p class="hint">The ride app sends the voice note and both languages, and gets back the translated text and speech.</p>
+        <pre><code>const form = new FormData();
+form.append('audio', voiceNote);
+form.append('from_lang', 'te-IN');
+form.append('to_lang', 'kn-IN');
+
+const res = await fetch('/v1/voice-messages', {
+  method: 'POST',
+  headers: { 'x-api-key': KEY },
+  body: form,
+});
+const { translated_text, audio_url } = await res.json();</code></pre>
+      </details>
+      </div>
+    </aside>
+  </main>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script type="module" src="/stage.js"></script>
+</body>
+</html>
