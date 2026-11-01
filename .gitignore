@@ -1,0 +1,10 @@
+node_modules/
+.env
+data/
+.taste-skill/
+# Local tooling: Claude Code skills and their lock file, not part of Maatu.
+.claude/
+skills-lock.json
+# Logo exploration pages, kept locally.
+public/brand/logos.html
+public/brand/orb-logos.html
