@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 72" width="300" height="72">
+  <title>Maatu, powered by Gnani</title>
+  <!-- Mark + wordmark, for the post, slides and the README. The text uses
+       Inter (falls back to the system sans), so check it renders where you
+       use it, or export a PNG from the browser. -->
+  <g transform="translate(4 4)">
+  <defs>
+    <radialGradient id="la" cx="68%" cy="20%" r="62%"><stop offset="0" stop-color="#ff9b61"/><stop offset="1" stop-color="#ff9b61" stop-opacity="0"/></radialGradient>
+    <radialGradient id="lb" cx="18%" cy="55%" r="62%"><stop offset="0" stop-color="#8fe6f8"/><stop offset="1" stop-color="#8fe6f8" stop-opacity="0"/></radialGradient>
+    <radialGradient id="lc" cx="66%" cy="86%" r="62%"><stop offset="0" stop-color="#b48cff"/><stop offset="1" stop-color="#b48cff" stop-opacity="0"/></radialGradient>
+    <clipPath id="lk"><path d="M28 5h8a22 22 0 0 1 22 22v4a22 22 0 0 1 -22 22H30c-3 0-5.8-.5-8.4-1.5C18.8 54.4 13.6 59.6 7 59.4c3.2-2.6 5.2-5.8 5.6-9.4A22 22 0 0 1 6 31v-4a22 22 0 0 1 22 -22Z"/></clipPath>
+  </defs>
+  <g clip-path="url(#lk)">
+    <rect width="64" height="64" fill="#f3eefc"/>
+    <rect width="64" height="64" fill="url(#la)"/>
+    <rect width="64" height="64" fill="url(#lb)"/>
+    <rect width="64" height="64" fill="url(#lc)"/>
+  </g>
+  <g fill="#ffffff">
+    <rect x="17.00" y="24.63" width="2.9" height="6.75" rx="1.45"/>
+    <rect x="21.16" y="21.25" width="2.9" height="13.49" rx="1.45"/>
+    <rect x="25.31" y="23.44" width="2.9" height="9.13" rx="1.45"/>
+    <rect x="29.47" y="18.08" width="2.9" height="19.84" rx="1.45"/>
+    <rect x="33.63" y="22.05" width="2.9" height="11.90" rx="1.45"/>
+    <rect x="37.79" y="20.06" width="2.9" height="15.87" rx="1.45"/>
+    <rect x="41.94" y="24.23" width="2.9" height="7.54" rx="1.45"/>
+    <rect x="46.10" y="25.82" width="2.9" height="4.36" rx="1.45"/>
+  </g>
+  </g>
+  <text x="76" y="40" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="38" font-weight="600" letter-spacing="-0.8" fill="#17171b">Maatu</text>
+  <text x="78" y="60" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="13" font-weight="600" fill="#6b6a70">powered by Gnani</text>
+</svg>

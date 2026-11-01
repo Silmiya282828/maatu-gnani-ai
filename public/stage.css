@@ -1,0 +1,481 @@
+:root {
+  /* Page background, "Aurora": a soft, out-of-focus wash of Gnani's own
+     pastels (peach, lavender, mint, rose) in the corners, like light through
+     frosted glass. No hard shapes, so the phones stay the subject. */
+  --bg: #fbfaf8;
+  --page-image:
+    radial-gradient(45% 55% at 8% 12%, #ffe0cc 0%, transparent 70%),
+    radial-gradient(40% 50% at 92% 8%, #e6dcff 0%, transparent 70%),
+    radial-gradient(45% 55% at 85% 95%, #d5f2e7 0%, transparent 70%),
+    radial-gradient(40% 50% at 12% 92%, #ffdbe6 0%, transparent 70%);
+  /* Soft neutral bezel, instead of a thick black frame. */
+  --frame: #e4e4e2;
+  --frame-ring: rgb(20 20 30 / 0.12);
+  --frame-shadow: 0 40px 80px -30px rgb(30 30 50 / 0.25), 0 12px 24px -12px rgb(30 30 50 / 0.1);
+  --surface: #ffffff;
+  --ink: #17171b;
+  --muted: #66666c;
+  --line: #e4e4e7;
+  /* Gnani's one bright colour: the orange → pink → purple of their mic orb.
+     Used for data on the stage; yellow stays inside the phones (Rapido's). */
+  --gnani: linear-gradient(110deg, #f7a35c 0%, #e8657a 50%, #a64ed6 100%);
+  --good: #1f8a4c;
+  --warn: #b4540a;
+
+  /* One scale for everything (the "premium" design skill's): text sizes,
+     spacing steps and corner radii. Nothing on the page uses a value off it,
+     so the rhythm stays even. The smallest text is 14px because the page
+     shrinks to ~65% on a laptop to fit the phones. */
+  --fs-sm: 14px;
+  --fs-md: 16px;
+  --fs-lg: 18px;
+  --fs-xl: 30px;
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-6: 24px;
+  --sp-8: 32px;
+  --r-control: 8px;
+  --r-card: 16px;
+  --r-phone: 36px;
+  --r-pill: 999px;
+  /* Both hero buttons, so they read as a pair. */
+  --r-btn: 12px;
+  /* A little shorter than a real phone, so a laptop has to shrink the page less. */
+  --phone-h: 680px;
+  --bar-h: 72px;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #121214;
+    --page-image: none;
+    --frame: #3a3633;
+    --frame-ring: rgb(255 255 255 / 0.06);
+    --frame-shadow: 0 40px 80px -30px rgb(0 0 0 / 0.7);
+    --surface: #1c1a18;
+    --ink: #f2f1ed;
+    --muted: #9c9ba3;
+    --line: #2c2c33;
+    --good: #4cc983;
+    --warn: #f0a05a;
+    color-scheme: dark;
+  }
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background-color: var(--bg);
+  background-image: var(--page-image);
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  color: var(--ink);
+  font: var(--fs-md)/1.45 Inter, system-ui, -apple-system, "Segoe UI", "Noto Sans", sans-serif;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .traveller.go-right, .traveller.go-left { animation-duration: 0.01s; }
+  .caret, .next { animation: none; }
+}
+
+html { scroll-padding-top: var(--bar-h); }
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
+}
+
+/* ---- Top bar: the same on both screens -------------------------------------- */
+
+.topbar {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 10;
+  height: var(--bar-h);
+  display: flex;
+  align-items: center;
+  gap: var(--sp-6);
+  padding: 0 var(--sp-8);
+  /* Frosted, so the page shows through faintly as it passes underneath. */
+  background: color-mix(in srgb, var(--bg) 72%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid color-mix(in srgb, var(--line) 60%, transparent);
+}
+/* Medium weights throughout, as on Gnani's console: nothing heavy. */
+.brand { display: flex; align-items: center; gap: var(--sp-3); color: inherit; text-decoration: none; border-radius: var(--r-control); }
+.brand .mark { flex: none; width: 44px; height: 44px; }
+.brand .name { display: block; font-size: 24px; font-weight: 600; line-height: 1; letter-spacing: -0.02em; }
+/* Small, tucked under the name, starting where "Maatu" starts. */
+.brand .powered { display: block; margin-top: var(--sp-1); font-size: 12px; font-weight: 500; color: var(--muted); }
+
+.brand:focus-visible, .btn:focus-visible, .badge:focus-visible, .next:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+.pill {
+  flex: none;
+  margin-left: auto;
+  padding: var(--sp-2) var(--sp-3);
+  border-radius: var(--r-pill);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  line-height: 1;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  color: var(--muted);
+}
+.pill.live { background: var(--good); border-color: var(--good); color: #fff; }
+
+/* ---- Screens ------------------------------------------------------------------ */
+
+.screen { position: relative; min-height: 100vh; min-height: 100dvh; }
+
+/* ---- Hero ----------------------------------------------------------------------- */
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: center;
+  align-content: center;
+  gap: var(--sp-8) 64px;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: calc(var(--bar-h) + var(--sp-6)) 64px 80px;
+}
+
+.hero-visual {
+  display: grid;
+  align-content: center;
+  gap: var(--sp-4);
+  min-height: clamp(260px, calc(100dvh - var(--bar-h) - 200px), 420px);
+}
+
+/* Shared by all three hero ideas: small grey "who" labels over calm, large
+   words, with no boxes around them. */
+.hero-visual .who { margin: 0 0 var(--sp-1); font-size: var(--fs-md); font-weight: 500; color: var(--muted); }
+.hero-visual .who b { font-weight: 600; color: var(--ink); }
+.hero-visual .line { margin: 0; font-size: clamp(24px, 2.3vw, 32px); font-weight: 500; line-height: 1.3; color: var(--ink); }
+.caret {
+  display: inline-block;
+  width: 3px;
+  height: 1em;
+  margin-left: 4px;
+  vertical-align: -0.12em;
+  border-radius: 2px;
+  background: var(--gnani);
+  animation: blink 1s steps(1) infinite;
+}
+@keyframes blink { 50% { opacity: 0; } }
+
+/* A: what Priya said stays, a little quieter; what each driver hears is the
+   line that types. Room for two lines each, so nothing jumps. */
+[data-mode="pair"] { gap: var(--sp-8); }
+[data-mode="pair"] .line { min-height: calc(2 * 1.3em); }
+[data-mode="pair"] .said { color: var(--muted); }
+
+/* B: a chat without bubbles. Priya on the left, Ravi on the right, and what
+   the other person hears indented under each message. */
+[data-mode="chat"] { gap: var(--sp-6); }
+[data-mode="chat"] .msg { display: grid; gap: var(--sp-1); max-width: 88%; }
+[data-mode="chat"] .msg.right { justify-self: end; text-align: right; opacity: 0; transition: opacity 0.3s; }
+[data-mode="chat"] .msg.right.shown { opacity: 1; }
+[data-mode="chat"] .line { font-size: clamp(22px, 2vw, 28px); min-height: 1.3em; }
+[data-mode="chat"] .heard {
+  margin: var(--sp-2) 0 0;
+  padding-left: var(--sp-3);
+  border-left: 3px solid #e8657a;
+  font-size: var(--fs-lg);
+  line-height: 1.4;
+  min-height: calc(var(--fs-sm) * 1.6 + 1.4em);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+[data-mode="chat"] .msg.right .heard { padding: 0 var(--sp-3) 0 0; border-left: 0; border-right: 3px solid #a64ed6; }
+[data-mode="chat"] .heard .who { display: block; font-size: var(--fs-sm); }
+[data-mode="chat"] .heard.shown { opacity: 1; }
+
+/* C: one line; the label names both people. */
+[data-mode="line"] { gap: var(--sp-4); }
+[data-mode="line"] .who.big { font-size: var(--fs-lg); line-height: 1.5; }
+[data-mode="line"] .typed { font-size: clamp(28px, 2.8vw, 40px); min-height: calc(3 * 1.3em); }
+
+/* TEMPORARY: the A / B / C picker. */
+.variant-switch {
+  position: fixed;
+  left: var(--sp-4);
+  bottom: var(--sp-4);
+  z-index: 20;
+  display: flex;
+  gap: var(--sp-1);
+  padding: var(--sp-1);
+  border-radius: var(--r-pill);
+  background: var(--surface);
+  box-shadow: 0 0 0 1px var(--line), 0 8px 24px -12px rgb(0 0 0 / 0.3);
+  font-size: var(--fs-sm);
+}
+.variant-switch a { padding: var(--sp-2) var(--sp-3); border-radius: var(--r-pill); color: var(--muted); text-decoration: none; }
+.variant-switch a.on { background: var(--ink); color: var(--bg); }
+
+.hero-copy { max-width: 560px; }
+.hero h1 {
+  margin: 0;
+  font-size: clamp(40px, 4.4vw, 64px);
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+}
+.grad { background: var(--gnani); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.lede { margin: var(--sp-6) 0 0; max-width: 44ch; font-size: var(--fs-lg); line-height: 1.55; color: var(--muted); }
+.ctas { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-3); margin-top: var(--sp-8); }
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  height: 56px;
+  padding: 0 var(--sp-6);
+  border-radius: var(--r-btn);
+  font-weight: 600;
+  text-decoration: none;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.btn.primary { background: var(--ink); color: var(--bg); }
+.btn.primary:hover { transform: translateY(-1px); box-shadow: 0 8px 20px -10px rgb(20 20 30 / 0.5); }
+
+/* "Get it on GitHub", shaped like an app-store badge. */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-3);
+  height: 56px;
+  padding: 0 var(--sp-6) 0 var(--sp-4);
+  border-radius: var(--r-btn);
+  background: #0d1117;
+  color: #fff;
+  text-decoration: none;
+  box-shadow: 0 0 0 1px rgb(255 255 255 / 0.12) inset;
+  transition: transform 0.2s;
+}
+.badge:hover { transform: translateY(-1px); }
+.badge span { display: grid; font-size: 20px; font-weight: 600; line-height: 1; letter-spacing: -0.01em; }
+.badge small { font-size: 12px; font-weight: 500; letter-spacing: 0.02em; margin-bottom: 2px; opacity: 0.85; }
+.badge.small { height: 44px; }
+.badge.small span { font-size: 16px; }
+
+/* A nudge towards the demo, bobbing gently at the bottom of the hero. */
+.next {
+  position: absolute;
+  left: 50%;
+  bottom: var(--sp-6);
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  margin-left: -22px;
+  border-radius: 50%;
+  color: var(--muted);
+  background: var(--surface);
+  box-shadow: 0 0 0 1px var(--line);
+  animation: bob 2.4s ease-in-out infinite;
+}
+.next:hover { color: var(--ink); }
+@keyframes bob { 50% { transform: translateY(4px); } }
+
+/* Gentle entrances: the hero on load, the demo when it scrolls into view
+   (stage.js adds .seen). Only when JavaScript is running, so nothing stays
+   hidden if it isn't. */
+@media (prefers-reduced-motion: no-preference) {
+  .hero-visual, .hero-copy > * { animation: rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+  .hero-copy > :nth-child(2) { animation-delay: 0.08s; }
+  .hero-copy > :nth-child(3) { animation-delay: 0.16s; }
+  .js .demo .device, .js .demo .route, .js .demo .folds { opacity: 0; transform: translateY(24px); transition: opacity 0.7s, transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1); }
+  .js .demo .rider { transition-delay: 0.08s; }
+  .js .demo .route, .js .demo .folds { transition-delay: 0.16s; }
+  .js .demo.seen .device, .js .demo.seen .route, .js .demo.seen .folds { opacity: 1; transform: none; }
+}
+@keyframes rise { from { opacity: 0; transform: translateY(16px); } }
+
+/* ---- Demo screen --------------------------------------------------------------- */
+
+.demo { padding-top: var(--bar-h); }
+
+.stage {
+  display: grid;
+  grid-template-columns: 360px 360px minmax(280px, 1fr);
+  gap: var(--sp-8) 64px;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: var(--sp-4) var(--sp-6) var(--sp-8);
+  align-items: start;
+}
+
+.device { margin: 0; }
+.device figcaption {
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0 0 var(--sp-2) var(--sp-2);
+}
+.device iframe {
+  display: block;
+  width: 360px;
+  height: var(--phone-h);
+  border: var(--sp-2) solid var(--frame);
+  border-radius: var(--r-phone);
+  background: var(--surface);
+  box-shadow: 0 0 0 1px var(--frame-ring), var(--frame-shadow);
+}
+
+.panel { display: grid; gap: var(--sp-6); }
+.hint { margin: var(--sp-3) 0 0; color: var(--muted); font-size: var(--fs-md); }
+
+/* Fold-outs: Pipeline and "How Rapido plugs it in". Only one is open at a
+   time (they share a name in index.html). */
+.fold { position: relative; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-card); padding: var(--sp-4); }
+.fold summary { cursor: pointer; font-weight: 500; font-size: var(--fs-md); line-height: 24px; color: var(--ink); border-radius: var(--r-control); }
+
+/* The pager sits on the Pipeline's title line, at the right. */
+.pager { position: absolute; top: var(--sp-3); right: var(--sp-3); display: inline-flex; align-items: center; gap: var(--sp-1); font-size: var(--fs-sm); color: var(--muted); font-variant-numeric: tabular-nums; }
+.pager[hidden] { display: none; }
+.pager button { width: 32px; height: 32px; border: 0; border-radius: var(--r-pill); background: none; font: inherit; font-size: var(--fs-lg); line-height: 1; color: var(--ink); cursor: pointer; }
+.pager button:hover:not(:disabled) { background: var(--bg); }
+.pager button:disabled { opacity: 0.3; cursor: default; }
+
+/* Keyboard focus is always visible, drawn the same way everywhere. */
+.fold summary:focus-visible,
+.pager button:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+
+.log { list-style: none; margin: var(--sp-3) 0 0; padding: 0; display: grid; gap: var(--sp-4); }
+.log li { display: grid; gap: var(--sp-2); padding-bottom: var(--sp-4); border-bottom: 1px solid var(--line); }
+.log li:last-child { border-bottom: 0; padding-bottom: 0; }
+.title { font-weight: 500; font-size: var(--fs-md); }
+.step { display: grid; grid-template-columns: minmax(0, 192px) minmax(40px, 1fr) 72px; align-items: center; gap: var(--sp-3); font-size: var(--fs-sm); color: var(--muted); }
+.bar { height: 6px; border-radius: var(--r-pill); background: var(--line); overflow: hidden; }
+.bar i { display: block; height: 100%; background: var(--gnani); border-radius: var(--r-pill); }
+.ms { text-align: right; font-variant-numeric: tabular-nums; color: var(--ink); }
+.total { font-size: var(--fs-sm); color: var(--good); font-weight: 600; }
+.total.warn { color: var(--warn); }
+
+pre {
+  margin: var(--sp-3) 0 0;
+  padding: var(--sp-3);
+  border-radius: var(--r-control);
+  background: var(--bg);
+  overflow-x: auto;
+  font-size: var(--fs-sm);
+  line-height: 1.5;
+}
+
+.panel, .device { min-width: 0; }
+
+/* ---- Route between the phones ---------------------------------------------- */
+
+.route { display: none; flex-direction: column; align-items: center; gap: var(--sp-2); min-width: 0; }
+.route-line { display: flex; align-items: center; gap: var(--sp-2); width: 100%; }
+.end { flex: none; display: grid; place-items: center; }
+.track {
+  position: relative;
+  flex: 1;
+  height: 2px;
+}
+/* Dashes cut out of Gnani's gradient, on their own layer so the mask doesn't
+   also cut the travelling dot. */
+.track::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--gnani);
+  -webkit-mask: repeating-linear-gradient(90deg, #000 0 6px, transparent 6px 12px);
+  mask: repeating-linear-gradient(90deg, #000 0 6px, transparent 6px 12px);
+  opacity: 0.85;
+}
+.traveller {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 16px;
+  height: 16px;
+  margin: -8px 0 0 -8px;
+  border-radius: 50%;
+  opacity: 0;
+  background: var(--gnani);
+  box-shadow: 0 0 12px 2px rgb(232 101 122 / 0.45);
+}
+.traveller.go-right { animation: travel-right 1.1s ease-in-out; }
+.traveller.go-left { animation: travel-left 1.1s ease-in-out; }
+@keyframes travel-right { 0% { left: 0; opacity: 0; } 15%, 85% { opacity: 1; } 100% { left: 100%; opacity: 0; } }
+@keyframes travel-left { 0% { left: 100%; opacity: 0; } 15%, 85% { opacity: 1; } 100% { left: 0; opacity: 0; } }
+.dist { font-size: var(--fs-sm); font-weight: 600; letter-spacing: 0.04em; color: var(--muted); }
+.caption { margin: var(--sp-3) 0 0; max-width: 52ch; text-align: center; font-size: var(--fs-lg); line-height: 1.4; color: var(--ink); text-wrap: balance; }
+
+/* ---- Wide screens: the two people far apart, the route between them, and
+   Gnani's pipeline underneath it, so every message visibly travels across. */
+
+@media (min-width: 1201px) {
+  /* Two screens that snap: one flick of the wheel moves from the hero to
+     the demo and back, like turning a page. */
+  /* Each screen has its own room for the top bar, so line them up with the
+     very top of the window. */
+  html { scroll-snap-type: y mandatory; scroll-padding-top: 0; }
+  .screen { scroll-snap-align: start; }
+  /* The demo is exactly one screen tall; stage.js shrinks the stage to fit. */
+  .demo { height: 100vh; height: 100dvh; display: flex; flex-direction: column; justify-content: center; }
+  .stage { max-width: 1600px; flex: none; }
+  /* The stage is exactly as tall as a phone (24px caption + 8px gap + the
+     phone + padding), and the middle column lives inside that. If it could
+     grow, the page would outgrow the screen after a few messages and the
+     fit-to-screen scaling would visibly jump. An open fold-out that runs
+     out of room scrolls inside itself instead. */
+  .stage {
+    height: calc(var(--sp-4) + 24px + var(--sp-2) + var(--phone-h) + var(--sp-8));
+    grid-template-columns: 360px minmax(320px, 1fr) 360px;
+    grid-template-rows: auto minmax(0, 1fr);
+    grid-template-areas: "cust route rider" "cust folds rider";
+    column-gap: 56px;
+  }
+  .device figcaption { line-height: 24px; }
+  .device.cust { grid-area: cust; }
+  .device.rider { grid-area: rider; }
+  .route { grid-area: route; display: flex; padding: 40px 0 var(--sp-6); }
+  .panel { display: contents; }
+  .folds { grid-area: folds; height: 100%; min-height: 0; display: flex; flex-direction: column; gap: var(--sp-6); }
+  .folds .fold { flex: 0 1 auto; min-height: 0; overflow: auto; }
+  /* "Get it on GitHub" sits in the bottom-right of the middle column. */
+  .folds .badge { flex: none; align-self: flex-end; margin-top: auto; }
+}
+
+@media (max-width: 1200px) {
+  .folds { display: grid; gap: var(--sp-6); }
+  .folds .badge { justify-self: end; }
+  .hero { padding-inline: var(--sp-8); gap: var(--sp-6) var(--sp-8); }
+  .demo { padding-top: calc(var(--bar-h) + var(--sp-4)); }
+  .stage { grid-template-columns: repeat(2, minmax(0, 360px)); justify-content: center; }
+  .device iframe { width: 100%; }
+  .panel { grid-column: 1 / -1; }
+}
+
+@media (max-width: 800px) {
+  .stage { grid-template-columns: minmax(0, 360px); }
+  /* The words first, then the animation under them. */
+  .hero { grid-template-columns: minmax(0, 1fr); padding: calc(var(--bar-h) + var(--sp-6)) var(--sp-4) 88px; }
+  .hero-copy { order: -1; }
+  .hero-visual { min-height: 400px; }
+  .topbar { padding: 0 var(--sp-4); gap: var(--sp-3); }
+  .brand .powered { display: none; }
+}
+
+@media (max-width: 420px) {
+  .brand .name { font-size: 20px; }
+  .brand .mark { width: 36px; height: 36px; }
+
+  .stage { padding: var(--sp-3) var(--sp-4) var(--sp-6); }
+  .device iframe { width: 100%; border-width: 6px; }
+}
