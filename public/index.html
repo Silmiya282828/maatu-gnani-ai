@@ -6,11 +6,12 @@
   <title>Maatu · powered by Gnani</title>
   <meta name="description" content="Open-source voice message translation for ride and delivery apps. The customer speaks their language; the driver hears theirs.">
   <link rel="icon" type="image/svg+xml" href="/brand/maatu-mark.svg">
-  <script src="/theme.js"></script>
   <!-- Inter, close to the clean geometric sans of Gnani's console. -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <!-- The hero's giant "hello" in each person's script. -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Kannada:wght@700&family=Noto+Sans+Telugu:wght@700&family=Noto+Sans+Devanagari:wght@700&family=Noto+Sans+Tamil:wght@700&family=Noto+Sans+Bengali:wght@700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/stage.css">
 </head>
 <body>
@@ -27,31 +28,23 @@
   </header>
 
   <main>
-    <!-- Screen 1: the hero. The left half shows what Maatu does without
-         words; the right half says it and links to the demo. -->
+    <!-- Screen 1: the hero. -->
     <section class="screen hero" id="home" aria-labelledby="heroTitle">
-      <!-- Words typing themselves out between a customer and drivers;
-           hero.js fills this in. -->
+      <!-- One person at a time in front of "hello" in their own script, taking
+           turns on a timer; hero.js runs it. -->
       <div class="hero-visual" id="heroVisual" role="img"
-           aria-label="Priya says 'I'm waiting at the pickup point' in Kannada; drivers hear it in Telugu, Hindi, Tamil, Malayalam and Bengali."></div>
-
-      <!-- TEMPORARY: picks between the three hero ideas. Remove once one is chosen. -->
-      <nav class="variant-switch" aria-label="Hero idea">
-        <a href="?hero=pair">A · Says / hears</a>
-        <a href="?hero=chat">B · Chat</a>
-        <a href="?hero=line">C · One line</a>
-      </nav>
+           aria-label="People who each hear every message in their own language.">
+        <p class="giant" id="giant" aria-hidden="true"></p>
+        <!-- Turns two blurred words into one solid shape, so one melts into the next. -->
+        <svg class="filters" aria-hidden="true" width="0" height="0">
+          <filter id="melt"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 255 -140"/></filter>
+        </svg>
+        <div class="person" id="person"></div>
+      </div>
 
       <div class="hero-copy">
-        <h1 id="heroTitle">Customer speaks.<br>Driver hears it in <span class="grad">their language.</span></h1>
-        <p class="lede">The customer speaks their own language. Every voice message arrives translated, in the driver's language. Open source, built for ride and delivery apps.</p>
-        <div class="ctas">
-          <a class="btn primary" href="#demo">Try the live demo</a>
-          <a class="badge" href="https://github.com/Silmiya282828/maatu-gnani-ai" target="_blank" rel="noopener">
-            <svg viewBox="0 0 16 16" width="24" height="24" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
-            <span><small>Get it on</small>GitHub</span>
-          </a>
-        </div>
+        <h1 id="heroTitle">Speak yours. They hear <span class="mark">theirs.</span></h1>
+        <p class="lede">Every voice message arrives in the listener's language. Open source, for ride and delivery apps.</p>
       </div>
 
       <a class="next" href="#demo" aria-label="Go to the live demo">

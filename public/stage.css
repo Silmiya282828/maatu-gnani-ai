@@ -1,13 +1,8 @@
 :root {
-  /* Page background, "Aurora": a soft, out-of-focus wash of Gnani's own
-     pastels (peach, lavender, mint, rose) in the corners, like light through
-     frosted glass. No hard shapes, so the phones stay the subject. */
-  --bg: #fbfaf8;
-  --page-image:
-    radial-gradient(45% 55% at 8% 12%, #ffe0cc 0%, transparent 70%),
-    radial-gradient(40% 50% at 92% 8%, #e6dcff 0%, transparent 70%),
-    radial-gradient(45% 55% at 85% 95%, #d5f2e7 0%, transparent 70%),
-    radial-gradient(40% 50% at 12% 92%, #ffdbe6 0%, transparent 70%);
+  /* Page background: flat cream paper, the same on both screens. */
+  --bg: #f4ede0;
+  /* A shade darker than the paper, for the hero's giant word. */
+  --tan: #d9c6a2;
   /* Soft neutral bezel, instead of a thick black frame. */
   --frame: #e4e4e2;
   --frame-ring: rgb(20 20 30 / 0.12);
@@ -15,10 +10,10 @@
   --surface: #ffffff;
   --ink: #17171b;
   --muted: #66666c;
-  --line: #e4e4e7;
-  /* Gnani's one bright colour: the orange → pink → purple of their mic orb.
-     Used for data on the stage; yellow stays inside the phones (Rapido's). */
-  --gnani: linear-gradient(110deg, #f7a35c 0%, #e8657a 50%, #a64ed6 100%);
+  --line: #e2d8c6;
+  /* One flat accent: the yellow of the phones, used like a highlighter. No
+     gradients anywhere on the page. */
+  --mark: #f9c933;
   --good: #1f8a4c;
   --warn: #b4540a;
 
@@ -48,40 +43,19 @@
   color-scheme: light;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg: #121214;
-    --page-image: none;
-    --frame: #3a3633;
-    --frame-ring: rgb(255 255 255 / 0.06);
-    --frame-shadow: 0 40px 80px -30px rgb(0 0 0 / 0.7);
-    --surface: #1c1a18;
-    --ink: #f2f1ed;
-    --muted: #9c9ba3;
-    --line: #2c2c33;
-    --good: #4cc983;
-    --warn: #f0a05a;
-    color-scheme: dark;
-  }
-}
-
 * { box-sizing: border-box; }
 
 body {
   margin: 0;
   min-height: 100vh;
-  background-color: var(--bg);
-  background-image: var(--page-image);
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
+  background: var(--bg);
   color: var(--ink);
   font: var(--fs-md)/1.45 Inter, system-ui, -apple-system, "Segoe UI", "Noto Sans", sans-serif;
 }
 
 @media (prefers-reduced-motion: reduce) {
   .traveller.go-right, .traveller.go-left { animation-duration: 0.01s; }
-  .caret, .next { animation: none; }
+  .next { animation: none; }
 }
 
 html { scroll-padding-top: var(--bar-h); }
@@ -139,88 +113,119 @@ html { scroll-padding-top: var(--bar-h); }
 /* ---- Hero ----------------------------------------------------------------------- */
 
 .hero {
+  position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  align-items: center;
-  align-content: center;
-  gap: var(--sp-8) 64px;
-  max-width: 1400px;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--sp-8);
+  max-width: 760px;
   margin: 0 auto;
-  padding: calc(var(--bar-h) + var(--sp-6)) 64px 80px;
+  padding: calc(var(--bar-h) + var(--sp-8)) var(--sp-8) 88px;
 }
+/* On narrow screens the words come first, then the poster under them. */
+.hero-copy { order: -1; }
 
+/* The poster: "hello" huge in the back, one person in front of it. Only the
+   person and the word change. On narrow screens
+   it sits under the words; on wide ones it fills the whole first screen, with
+   the person in the middle, chest at the bottom edge. */
 .hero-visual {
+  position: relative;
+  height: 520px;
+  /* The giant word starts wide before hero.js sizes it; never let it widen the page. */
+  overflow: clip;
+}
+.giant {
+  position: absolute;
+  inset: 0 0 auto;
   display: grid;
-  align-content: center;
-  gap: var(--sp-4);
-  min-height: clamp(260px, calc(100dvh - var(--bar-h) - 200px), 420px);
+  justify-items: center;
+  margin: 0;
+  white-space: nowrap;
+  font-size: 200px;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--tan);
 }
-
-/* Shared by all three hero ideas: small grey "who" labels over calm, large
-   words, with no boxes around them. */
-.hero-visual .who { margin: 0 0 var(--sp-1); font-size: var(--fs-md); font-weight: 500; color: var(--muted); }
-.hero-visual .who b { font-weight: 600; color: var(--ink); }
-.hero-visual .line { margin: 0; font-size: clamp(24px, 2.3vw, 32px); font-weight: 500; line-height: 1.3; color: var(--ink); }
-.caret {
-  display: inline-block;
-  width: 3px;
-  height: 1em;
-  margin-left: 4px;
-  vertical-align: -0.12em;
-  border-radius: 2px;
-  background: var(--gnani);
-  animation: blink 1s steps(1) infinite;
+/* While one word melts into the next they sit on top of each other. */
+.giant .word { grid-area: 1 / 1; }
+.filters { position: absolute; }
+.giant.morphing { filter: url(#melt) blur(0.6px); }
+/* All five people stand on the same spot, centred, chest on the bottom edge;
+   the one showing has .on and they fade into each other. */
+.person {
+  position: absolute;
+  z-index: 1;
+  left: 50%;
+  bottom: 0;
+  width: 0;
+  height: 82%;
 }
-@keyframes blink { 50% { opacity: 0; } }
-
-/* A: what Priya said stays, a little quieter; what each driver hears is the
-   line that types. Room for two lines each, so nothing jumps. */
-[data-mode="pair"] { gap: var(--sp-8); }
-[data-mode="pair"] .line { min-height: calc(2 * 1.3em); }
-[data-mode="pair"] .said { color: var(--muted); }
-
-/* B: a chat without bubbles. Priya on the left, Ravi on the right, and what
-   the other person hears indented under each message. */
-[data-mode="chat"] { gap: var(--sp-6); }
-[data-mode="chat"] .msg { display: grid; gap: var(--sp-1); max-width: 88%; }
-[data-mode="chat"] .msg.right { justify-self: end; text-align: right; opacity: 0; transition: opacity 0.3s; }
-[data-mode="chat"] .msg.right.shown { opacity: 1; }
-[data-mode="chat"] .line { font-size: clamp(22px, 2vw, 28px); min-height: 1.3em; }
-[data-mode="chat"] .heard {
-  margin: var(--sp-2) 0 0;
-  padding-left: var(--sp-3);
-  border-left: 3px solid #e8657a;
-  font-size: var(--fs-lg);
-  line-height: 1.4;
-  min-height: calc(var(--fs-sm) * 1.6 + 1.4em);
+.figure {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 100%;
+  width: auto;
+  max-width: none;
+  transform: translateX(-50%) scale(0.97);
+  transform-origin: 50% 100%;
   opacity: 0;
-  transition: opacity 0.3s;
 }
-[data-mode="chat"] .msg.right .heard { padding: 0 var(--sp-3) 0 0; border-left: 0; border-right: 3px solid #a64ed6; }
-[data-mode="chat"] .heard .who { display: block; font-size: var(--fs-sm); }
-[data-mode="chat"] .heard.shown { opacity: 1; }
-
-/* C: one line; the label names both people. */
-[data-mode="line"] { gap: var(--sp-4); }
-[data-mode="line"] .who.big { font-size: var(--fs-lg); line-height: 1.5; }
-[data-mode="line"] .typed { font-size: clamp(28px, 2.8vw, 40px); min-height: calc(3 * 1.3em); }
-
-/* TEMPORARY: the A / B / C picker. */
-.variant-switch {
-  position: fixed;
-  left: var(--sp-4);
-  bottom: var(--sp-4);
-  z-index: 20;
-  display: flex;
+.figure.on { transform: translateX(-50%); opacity: 1; }
+@media (prefers-reduced-motion: no-preference) {
+  .figure { transition: opacity 0.5s ease, transform 0.5s ease; }
+}
+/* Stands in for a picture that's missing. */
+.placeholder {
+  display: grid;
+  place-content: center;
   gap: var(--sp-1);
-  padding: var(--sp-1);
-  border-radius: var(--r-pill);
-  background: var(--surface);
-  box-shadow: 0 0 0 1px var(--line), 0 8px 24px -12px rgb(0 0 0 / 0.3);
-  font-size: var(--fs-sm);
+  height: 100%;
+  aspect-ratio: 4 / 5;
+  text-align: center;
+  border: 2px dashed var(--muted);
+  border-radius: 160px 160px 0 0;
+  color: var(--ink);
 }
-.variant-switch a { padding: var(--sp-2) var(--sp-3); border-radius: var(--r-pill); color: var(--muted); text-decoration: none; }
-.variant-switch a.on { background: var(--ink); color: var(--bg); }
+.placeholder b { font-size: var(--fs-lg); font-weight: 600; }
+.placeholder small { font-size: var(--fs-sm); color: var(--muted); }
+
+
+@media (min-width: 1101px) {
+  /* Exactly one screen, like a poster, so nothing spills into the demo. */
+  .hero {
+    display: block;
+    max-width: none;
+    height: 100vh;
+    height: 100dvh;
+    min-height: 520px;
+    padding: 0;
+    overflow: clip;
+  }
+  .hero-visual { position: absolute; inset: 0; height: auto; }
+  /* The person and the word fill the bottom 43%; the headline gets the room
+     above. The word starts just above the head, so the head overlaps it and
+     it sits behind them. */
+  .giant { top: 57%; font-size: min(18vh, 182px); }
+  .person { height: 41%; }
+  /* The headline, centred in the space between the top bar and the word. */
+  .hero .hero-copy {
+    position: absolute;
+    z-index: 2;
+    inset: 0 0 auto;
+    height: 57%;
+    max-width: none;
+    padding: var(--bar-h) var(--sp-8) 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+  .hero .hero-copy h1 { font-size: clamp(36px, min(4vw, 7.5vh), 64px); }
+  .hero .lede { max-width: none; margin-top: var(--sp-4); font-size: var(--fs-md); }
+  .hero .next { left: auto; right: var(--sp-8); margin-left: 0; }
+}
 
 .hero-copy { max-width: 560px; }
 .hero h1 {
@@ -231,7 +236,16 @@ html { scroll-padding-top: var(--bar-h); }
   letter-spacing: -0.035em;
   text-wrap: balance;
 }
-.grad { background: var(--gnani); -webkit-background-clip: text; background-clip: text; color: transparent; }
+/* "their language." gets a yellow highlighter stroke that swipes in. */
+.mark {
+  background: linear-gradient(var(--mark), var(--mark)) no-repeat 0 88% / 100% 0.3em;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .mark { animation: swipe 0.7s 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+}
+@keyframes swipe { from { background-size: 0% 0.3em; } }
 .lede { margin: var(--sp-6) 0 0; max-width: 44ch; font-size: var(--fs-lg); line-height: 1.55; color: var(--muted); }
 .ctas { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-3); margin-top: var(--sp-8); }
 
@@ -359,7 +373,7 @@ html { scroll-padding-top: var(--bar-h); }
 .title { font-weight: 500; font-size: var(--fs-md); }
 .step { display: grid; grid-template-columns: minmax(0, 192px) minmax(40px, 1fr) 72px; align-items: center; gap: var(--sp-3); font-size: var(--fs-sm); color: var(--muted); }
 .bar { height: 6px; border-radius: var(--r-pill); background: var(--line); overflow: hidden; }
-.bar i { display: block; height: 100%; background: var(--gnani); border-radius: var(--r-pill); }
+.bar i { display: block; height: 100%; background: var(--ink); border-radius: var(--r-pill); }
 .ms { text-align: right; font-variant-numeric: tabular-nums; color: var(--ink); }
 .total { font-size: var(--fs-sm); color: var(--good); font-weight: 600; }
 .total.warn { color: var(--warn); }
@@ -386,16 +400,15 @@ pre {
   flex: 1;
   height: 2px;
 }
-/* Dashes cut out of Gnani's gradient, on their own layer so the mask doesn't
-   also cut the travelling dot. */
+/* Dashes on their own layer, so the mask doesn't also cut the travelling dot. */
 .track::before {
   content: "";
   position: absolute;
   inset: 0;
-  background: var(--gnani);
+  background: var(--muted);
   -webkit-mask: repeating-linear-gradient(90deg, #000 0 6px, transparent 6px 12px);
   mask: repeating-linear-gradient(90deg, #000 0 6px, transparent 6px 12px);
-  opacity: 0.85;
+  opacity: 0.6;
 }
 .traveller {
   position: absolute;
@@ -406,8 +419,8 @@ pre {
   margin: -8px 0 0 -8px;
   border-radius: 50%;
   opacity: 0;
-  background: var(--gnani);
-  box-shadow: 0 0 12px 2px rgb(232 101 122 / 0.45);
+  background: var(--mark);
+  box-shadow: 0 0 0 2px var(--ink);
 }
 .traveller.go-right { animation: travel-right 1.1s ease-in-out; }
 .traveller.go-left { animation: travel-left 1.1s ease-in-out; }
@@ -455,7 +468,6 @@ pre {
 @media (max-width: 1200px) {
   .folds { display: grid; gap: var(--sp-6); }
   .folds .badge { justify-self: end; }
-  .hero { padding-inline: var(--sp-8); gap: var(--sp-6) var(--sp-8); }
   .demo { padding-top: calc(var(--bar-h) + var(--sp-4)); }
   .stage { grid-template-columns: repeat(2, minmax(0, 360px)); justify-content: center; }
   .device iframe { width: 100%; }
@@ -464,10 +476,11 @@ pre {
 
 @media (max-width: 800px) {
   .stage { grid-template-columns: minmax(0, 360px); }
-  /* The words first, then the animation under them. */
-  .hero { grid-template-columns: minmax(0, 1fr); padding: calc(var(--bar-h) + var(--sp-6)) var(--sp-4) 88px; }
-  .hero-copy { order: -1; }
-  .hero-visual { min-height: 400px; }
+  .hero { padding: calc(var(--bar-h) + var(--sp-6)) var(--sp-4) 88px; }
+  /* Phones: the word at the top, the person centred in front of it. */
+  .hero-visual { height: 480px; }
+  .giant { top: 120px; }
+  .person { height: 66%; }
   .topbar { padding: 0 var(--sp-4); gap: var(--sp-3); }
   .brand .powered { display: none; }
 }

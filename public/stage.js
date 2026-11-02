@@ -40,25 +40,33 @@ const arrival = new IntersectionObserver(([entry]) => {
 }, { threshold: 0.5 });
 arrival.observe(demo);
 
-// On wide screens the hero and the demo act like two pages: one flick of the
-// wheel goes to the other one, however small the flick. Scrolling inside a
-// phone or an open fold-out still scrolls that, not the page.
-const screens = [document.getElementById('home'), document.getElementById('demo')];
-let turning = false;
+// On wide screens the page moves in whole steps: one flick of the wheel goes
+// from the hero to the demo or back, however small the flick. Scrolling inside
+// a phone or an open fold-out still scrolls that, not the page.
+const stops = [document.getElementById('home'), demo];
+// A trackpad flick is a stream of wheel events; a pause this long ends it.
+const FLICK_GAP_MS = 200;
+let lastWheel = -Infinity;
+let spent = false; // this flick has already moved the page
+let moving = false; // the page is still sliding to the next stop
 addEventListener('wheel', (event) => {
   if (!wide.matches || event.ctrlKey || Math.abs(event.deltaY) < Math.abs(event.deltaX)) return;
-  if (turning) return event.preventDefault();
+  if (event.timeStamp - lastWheel > FLICK_GAP_MS) spent = false;
+  lastWheel = event.timeStamp;
+  if (spent || moving) return event.preventDefault();
   const down = event.deltaY > 0;
   const inner = event.target.closest?.('.fold');
   if (inner && (down ? inner.scrollTop + inner.clientHeight < inner.scrollHeight - 1 : inner.scrollTop > 0)) return;
-  const current = scrollY < screens[1].offsetTop / 2 ? 0 : 1;
+  const tops = stops.map((el) => el.getBoundingClientRect().top + scrollY);
+  const distances = tops.map((top) => Math.abs(top - scrollY));
+  const current = distances.indexOf(Math.min(...distances));
   const next = current + (down ? 1 : -1);
-  if (next < 0 || next >= screens.length) return;
+  if (next < 0 || next >= stops.length) return;
   event.preventDefault();
-  turning = true;
-  screens[next].scrollIntoView({ behavior: 'smooth' });
-  // Ignore the rest of this flick until the page has finished moving.
-  const done = () => { turning = false; };
+  spent = true;
+  moving = true;
+  scrollTo({ top: tops[next], behavior: 'smooth' });
+  const done = () => { moving = false; };
   addEventListener('scrollend', done, { once: true });
   setTimeout(done, 1500);
 }, { passive: false });
