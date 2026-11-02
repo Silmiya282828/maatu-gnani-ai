@@ -18,6 +18,11 @@ export const config = {
   gnaniApiKey: env.GNANI_API_KEY || '',
   geminiApiKey: env.GEMINI_API_KEY || '',
   geminiModel: env.GEMINI_MODEL || 'gemini-2.5-flash',
+  sarvamApiKey: env.SARVAM_API_KEY || '',
+  bhashiniUserId: env.BHASHINI_USER_ID || '',
+  bhashiniApiKey: env.BHASHINI_API_KEY || '',
+  // Which set of Bhashini models to use; this is their default ("Initial Pipeline").
+  bhashiniPipelineId: env.BHASHINI_PIPELINE_ID || '64392f96daac500b55c543cd',
   ttsModel: env.TTS_MODEL || 'timbre-v2.5',
   ttsV3Voice: env.TTS_V3_VOICE || 'Avinash',
   maxConcurrent: Number(env.MAX_CONCURRENT) || 8,
@@ -25,9 +30,16 @@ export const config = {
   maxLiveCalls: Number(env.MAX_LIVE_CALLS) || 40,
 };
 
+// Translation uses the first service whose key is set: Sarvam, Bhashini, Gemini.
+const translator =
+  (config.sarvamApiKey && 'sarvam') ||
+  (config.bhashiniUserId && config.bhashiniApiKey && 'bhashini') ||
+  (config.geminiApiKey && 'gemini') ||
+  null;
+
 // Each service goes live only if live mode is on AND its key is present,
 // so Gnani can be tested before a translation key exists.
 export const live = {
   gnani: LIVE && Boolean(config.gnaniApiKey),
-  translate: LIVE && Boolean(config.geminiApiKey),
+  translate: LIVE && translator ? translator : false,
 };

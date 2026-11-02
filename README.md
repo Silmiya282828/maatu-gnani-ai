@@ -20,7 +20,7 @@ Then open http://localhost:4620.
 Live mode makes real API calls and **spends credits**:
 
 ```bash
-cp .env.example .env   # then add GNANI_API_KEY (and GEMINI_API_KEY for translation)
+cp .env.example .env   # then add GNANI_API_KEY, plus SARVAM_API_KEY for translation
 npm run live
 ```
 
@@ -31,7 +31,7 @@ Each service goes live only when its key is set, so you can test Gnani before yo
 ```
 POST /v1/voice-messages
 x-api-key: <client key>
-multipart: audio (wav/mp3/ogg/flac/aac/m4a, ≤ 60 s), from_lang, to_lang
+multipart: audio (wav/mp3/ogg/flac/aac/m4a, ≤ 30 s), from_lang, to_lang
 ```
 
 ```json
@@ -80,7 +80,7 @@ In production you'd also move audio to object storage (S3 or similar), share the
 ```
 src/server.js         API routes + the demo chat relay
 src/pipeline.js       speech → text → translation → speech, with fallbacks
-src/providers/        gnani.js (Prisma, Timbre), gemini.js (translation), mock.js
+src/providers/        gnani.js (Prisma, Timbre), sarvam.js (translation), bhashini.js and gemini.js (other translators), mock.js
 src/limiter.js        per-service queue
 src/cache.js          LRU cache
 public/index.html     two-phone demo stage + live pipeline timings

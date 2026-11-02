@@ -39,3 +39,23 @@ export function chime(sampleRate = 16000) {
 export function silence(seconds, sampleRate = 16000) {
   return encodeWav(new Float32Array(Math.floor(seconds * sampleRate)), sampleRate);
 }
+
+// Timbre streams its WAVs, so the header says "length unknown" (0xFFFFFFFF).
+// Some players then show a wrong duration or refuse to seek, so write the real
+// lengths in once the whole file is here.
+export function fixWavLengths(buf) {
+  if (buf.length < 12 || buf.toString('ascii', 0, 4) !== 'RIFF') return buf;
+  buf.writeUInt32LE(buf.length - 8, 4);
+  // Walk the chunks to find "data"; everything after its header is audio.
+  let at = 12;
+  while (at + 8 <= buf.length) {
+    const id = buf.toString('ascii', at, at + 4);
+    const size = buf.readUInt32LE(at + 4);
+    if (id === 'data') {
+      buf.writeUInt32LE(buf.length - at - 8, at + 4);
+      break;
+    }
+    at += 8 + size + (size % 2);
+  }
+  return buf;
+}

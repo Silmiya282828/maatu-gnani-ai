@@ -6,15 +6,17 @@ import { createLimiter } from './limiter.js';
 import { LruCache } from './cache.js';
 import * as gnani from './providers/gnani.js';
 import * as gemini from './providers/gemini.js';
+import * as bhashini from './providers/bhashini.js';
+import * as sarvam from './providers/sarvam.js';
 import * as mock from './providers/mock.js';
 
 const stt = live.gnani ? gnani : mock;
 const tts = live.gnani ? gnani : mock;
-const translator = live.translate ? gemini : mock;
+const translator = { sarvam, bhashini, gemini }[live.translate] ?? mock;
 
 export const providers = {
   stt: live.gnani ? 'gnani-prisma' : 'mock',
-  translate: live.translate ? `gemini (${config.geminiModel})` : 'mock',
+  translate: { sarvam: 'sarvam-mayura', bhashini: 'bhashini', gemini: `gemini (${config.geminiModel})` }[live.translate] ?? 'mock',
   tts: live.gnani ? `gnani-${config.ttsModel}` : 'mock',
 };
 

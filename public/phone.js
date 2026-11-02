@@ -5,7 +5,7 @@ const params = new URLSearchParams(location.search);
 const role = params.get('role') === 'rider' ? 'rider' : 'customer';
 const peerRole = role === 'customer' ? 'rider' : 'customer';
 const rideId = params.get('ride') || 'demo';
-const MAX_SECONDS = 55; // Prisma's REST limit is 60 s
+const MAX_SECONDS = 28; // Prisma's REST limit is 30 s
 
 // Made-up people for the demo screens.
 const PEOPLE = {

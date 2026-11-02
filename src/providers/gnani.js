@@ -1,12 +1,13 @@
 import { config } from '../config.js';
 import { LANGUAGES } from '../languages.js';
 import { spendGnaniCall } from '../budget.js';
+import { fixWavLengths } from '../wav.js';
 
 // Docs: https://docs.gnani.ai/api/introduction/introduction.md
 const BASE = 'https://api.vachana.ai';
 const TIMEOUT_MS = 15000;
 
-// Prisma v2.5 speech-to-text. REST takes clips up to 60 s, which covers any
+// Prisma v2.5 speech-to-text. REST takes clips up to 30 s, which covers any
 // chat voice note, so we don't need the streaming WebSocket version.
 export async function transcribe(audio, lang) {
   spendGnaniCall('prisma-stt');
@@ -50,7 +51,7 @@ export async function speak(text, lang) {
     const body = await res.json().catch(() => ({}));
     throw new Error(`Timbre TTS failed (${res.status}): ${JSON.stringify(body.error ?? body)}`);
   }
-  return Buffer.from(await res.arrayBuffer());
+  return fixWavLengths(Buffer.from(await res.arrayBuffer()));
 }
 
 // v2.5 voices each speak one language; v3.0 voices speak all ten.
