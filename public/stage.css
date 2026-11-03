@@ -95,7 +95,7 @@ html { scroll-padding-top: var(--bar-h); }
 /* Small, tucked under the name, starting where "Maatu" starts. */
 .brand .powered { display: block; margin-top: var(--sp-1); font-size: 12px; font-weight: 500; color: var(--bar-muted); }
 
-.brand:focus-visible, .btn:focus-visible, .code-link:focus-visible, .next:focus-visible {
+.brand:focus-visible, .btn:focus-visible, .next:focus-visible {
   outline: 2px solid var(--ink);
   outline-offset: 2px;
 }
@@ -400,28 +400,6 @@ h1 .mark {
 
 .panel, .device { min-width: 0; }
 
-/* "See the code on GitHub": a yellow pill like the phones' mic button, since
-   yellow is the colour of things you press. */
-.code-link {
-  justify-self: center;
-  align-self: end;
-  display: inline-flex;
-  align-items: center;
-  gap: var(--sp-2);
-  height: 44px;
-  padding: 0 var(--sp-4);
-  border-radius: var(--r-pill);
-  background: var(--mark);
-  font-size: var(--fs-sm);
-  font-weight: 600;
-  color: var(--ink);
-  text-decoration: none;
-}
-.code-link:hover { transform: translateY(-1px); box-shadow: 0 8px 20px -10px rgb(120 90 0 / 0.6); }
-@media (prefers-reduced-motion: no-preference) {
-  .code-link { transition: transform 0.2s, box-shadow 0.2s; }
-}
-
 /* The flip between the two phones; phones only. */
 .switch { display: none; }
 
@@ -485,8 +463,8 @@ h1 .mark {
   .stage {
     height: calc(var(--sp-4) + 24px + var(--sp-2) + var(--phone-h) + var(--sp-8));
     grid-template-columns: 360px minmax(320px, 1fr) 360px;
-    grid-template-rows: auto minmax(0, 1fr) auto;
-    grid-template-areas: "cust route rider" "cust folds rider" "cust code rider";
+    grid-template-rows: auto minmax(0, 1fr);
+    grid-template-areas: "cust route rider" "cust folds rider";
     column-gap: 56px;
   }
   .device figcaption { line-height: 24px; }
@@ -496,8 +474,6 @@ h1 .mark {
   .panel { display: contents; }
   .folds { grid-area: folds; height: 100%; min-height: 0; display: flex; flex-direction: column; gap: var(--sp-6); }
   .folds .fold { flex: 0 1 auto; min-height: 0; overflow: auto; }
-  /* "See the code on GitHub" sits at the bottom of the middle column. */
-  .code-link { grid-area: code; margin-top: var(--sp-6); }
 }
 
 @media (max-width: 1200px) {
@@ -535,7 +511,7 @@ h1 .mark {
   .demo { padding-top: 0; overflow: clip; }
   .stage {
     grid-template-columns: minmax(0, 360px);
-    grid-template-areas: "switch" "phones" "panel" "code";
+    grid-template-areas: "switch" "phones" "panel";
     row-gap: var(--sp-3);
     padding-top: var(--sp-3);
   }
@@ -589,7 +565,6 @@ h1 .mark {
   .stage:not(.on-rider) .device.rider { transform: translateY(calc(100% + var(--sp-8))); }
   .stage.on-rider .device.cust { transform: scale(0.94); }
   .panel { grid-area: panel; justify-self: center; width: calc(360px * var(--s, 1)); margin-top: var(--sp-6); }
-  .code-link { grid-area: code; margin: var(--sp-6) 0 var(--sp-4); }
 }
 @media (max-width: 800px) and (prefers-reduced-motion: no-preference) {
   .device { transition: transform 0.5s cubic-bezier(0.2, 0.7, 0.2, 1), opacity 0.4s; }
