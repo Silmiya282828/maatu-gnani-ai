@@ -114,12 +114,22 @@ async function finishRecording() {
   send(wav, 'message.wav');
 }
 
-$('attach').addEventListener('click', () => $('file').click());
-$('file').addEventListener('change', () => {
-  const file = $('file').files[0];
-  if (file) send(file, file.name);
-  $('file').value = '';
+// ---- The paperclip ---------------------------------------------------------------
+// A little joke for whoever pokes around: the only attachment is a CV.
+
+const egg = $('egg');
+function showEgg(open) {
+  egg.hidden = !open;
+  $('attach').setAttribute('aria-expanded', String(open));
+  if (open) $('eggClose').focus();
+}
+$('attach').addEventListener('click', (e) => {
+  e.stopPropagation();
+  showEgg(egg.hidden);
 });
+$('eggClose').addEventListener('click', () => showEgg(false));
+document.addEventListener('click', (e) => { if (!egg.hidden && !egg.contains(e.target)) showEgg(false); });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !egg.hidden) showEgg(false); });
 
 // ---- Quick chat ---------------------------------------------------------------
 
@@ -259,8 +269,8 @@ function playAudio(url, button) {
   });
 }
 
-// Gnani's own loading look: soft orange / blue / purple orbs, shown for the
-// second it takes to translate. renderMessage() replaces it with the result.
+// Three hopping dots, shown for the second it takes to translate.
+// renderMessage() replaces it with the result.
 function thinking() {
   const row = el('div', 'thinking');
   const orbs = el('span', 'orbs');

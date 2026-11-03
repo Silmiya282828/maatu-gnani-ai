@@ -63,15 +63,60 @@ const figures = PEOPLE.map((p, i) => {
 
 let word = null; // the word showing, or arriving
 
-function fit(el) {
-  el.style.fontSize = '';
-  // On wide screens it stays a little wider than the person.
-  const room = wide.matches ? Math.min(visual.clientWidth * 0.32, 504) : visual.clientWidth;
-  const natural = el.offsetWidth;
-  if (natural > room) {
-    const size = parseFloat(getComputedStyle(el).fontSize);
-    el.style.fontSize = `${Math.floor(size * (room / natural))}px`;
+// Each script's font has letters of a different height and sits at a different
+// height in its line, so at one font size the words jump up and down. Instead
+// every word gets its own size, so all their letters are the same height, and
+// is nudged so the top of its first letter lands on the same line.
+const ink = document.createElement('canvas').getContext('2d', { willReadFrequently: true });
+let sizes = []; // per person: { size, top } in px, top = letter top above the baseline
+let headLine = 0; // where every letter top lands, in px below the top of .giant
+
+// The top and bottom of a word's first letter, in em above the baseline, and
+// the word's width in em. Found by drawing the letter and taking the first and
+// last rows that are mostly ink, so a thin mark on top (Kannada's tick, a
+// Hindi vowel sign) sticks out above the line instead of counting as the top.
+function shape(p) {
+  const px = 200;
+  ink.canvas.width = ink.canvas.height = px * 2; // also clears it
+  ink.font = `700 ${px}px '${p.font}'`;
+  ink.fillText(p.hello[0], 0, px * 1.5);
+  const span = ink.measureText(p.hello[0]).width * 0.35;
+  const { width, height, data } = ink.getImageData(0, 0, px * 2, px * 2);
+  const rows = [];
+  for (let y = 0; y < height; y++) {
+    let filled = 0;
+    for (let x = 0; x < width; x++) if (data[(y * width + x) * 4 + 3] > 128) filled++;
+    if (filled > span) rows.push(y);
   }
+  return {
+    top: (px * 1.5 - rows[0]) / px,
+    bottom: (px * 1.5 - rows.at(-1)) / px,
+    width: ink.measureText(p.hello).width / px,
+  };
+}
+
+function measure() {
+  const base = parseFloat(getComputedStyle(giant).fontSize);
+  // On wide screens it stays a little wider than the person.
+  const room = wide.matches ? Math.min(visual.clientWidth * 0.352, 554) : visual.clientWidth;
+  const m = PEOPLE.map(shape);
+  const tall = (x) => x.top - x.bottom;
+  // The usual letter height, unless the widest word would then not fit.
+  const height = Math.min((base * m.reduce((sum, x) => sum + tall(x), 0)) / n, ...m.map((x) => (room * tall(x)) / x.width));
+  sizes = m.map((x) => ({ size: height / tall(x), top: (x.top * height) / tall(x) }));
+  headLine = base * 0.3;
+}
+
+function place(el, i) {
+  el.style.fontSize = `${sizes[i].size}px`;
+  // A zero-size box sitting on the text's baseline shows where the baseline is.
+  const mark = document.createElement('i');
+  mark.className = 'baseline';
+  el.append(mark);
+  const baseline = mark.getBoundingClientRect().bottom - giant.getBoundingClientRect().top;
+  mark.remove();
+  const current = parseFloat(el.style.translate.split(' ')[1]) || 0;
+  el.style.translate = `0 ${Math.round(headLine - (baseline - current - sizes[i].top))}px`;
 }
 
 // f goes from 0 (not there) to 1 (fully there).
@@ -80,13 +125,14 @@ const melt = (arriving) => Array.from({ length: 11 }, (_, k) => {
   return { filter: `blur(${Math.min(8 / f - 8, 100)}px)`, opacity: f ** 0.4 };
 });
 
-function morph(p, instant) {
+function morph(i, instant) {
+  const p = PEOPLE[i];
   const next = document.createElement('span');
   next.className = 'word';
   next.style.fontFamily = `'${p.font}', 'Noto Sans', sans-serif`;
   next.textContent = p.hello;
   giant.append(next);
-  fit(next);
+  place(next, i);
   const old = word;
   word = next;
   // A word still on its way out from an earlier change just goes.
@@ -111,7 +157,7 @@ function show(i) {
   if (i === shown) return;
   const p = PEOPLE[i];
   figures.forEach((el, k) => el.classList.toggle('on', k === i));
-  morph(p, shown === -1);
+  morph(i, shown === -1);
   visual.setAttribute('aria-label', `${p.name}, ${p.role.toLowerCase()}, hears every message in ${p.lang}.`);
   shown = i;
 }
@@ -119,7 +165,11 @@ function show(i) {
 // ---- Taking turns ----------------------------------------------------------------
 
 (async function loop() {
+  // A script's font only downloads once something uses it, so ask for all five
+  // before measuring them.
   await document.fonts.ready;
+  await Promise.all(PEOPLE.map((p) => document.fonts.load(`700 100px '${p.font}'`, p.hello)));
+  measure();
   show(0);
   for (;;) {
     await wait(SHOW_MS);
@@ -127,4 +177,11 @@ function show(i) {
   }
 })();
 
-addEventListener('resize', () => word && fit(word));
+function refit() {
+  if (!word) return;
+  measure();
+  place(word, shown);
+}
+addEventListener('resize', refit);
+// If a font arrives after the first measuring, measure again with it.
+document.fonts.addEventListener('loadingdone', refit);

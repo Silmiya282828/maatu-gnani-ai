@@ -1,8 +1,8 @@
 :root {
   /* Page background: flat cream paper, the same on both screens. */
-  --bg: #f4ede0;
+  --bg: #f4e9d4;
   /* A shade darker than the paper, for the hero's giant word. */
-  --tan: #d9c6a2;
+  --tan: #d6c09a;
   /* Soft neutral bezel, instead of a thick black frame. */
   --frame: #e4e4e2;
   --frame-ring: rgb(20 20 30 / 0.12);
@@ -10,11 +10,21 @@
   --surface: #ffffff;
   --ink: #17171b;
   --muted: #66666c;
-  --line: #e2d8c6;
+  /* The top bar: a dark warm brown strip above the cream page, not a grey. */
+  --bar-bg: #4b392b;
+  --bar-ink: #f4ede0;
+  --bar-muted: #c6b39b;
+  /* The brand colours each have one job. Red, the logo's, is Priya the
+     customer (her pickup pin); the deep green of the sari is Ravi the rider
+     (his auto) and the live chip; yellow (--mark) is whatever you press and
+     the message on its way. The red is the logo's, darkened to the same
+     strength as the green so text in either reads clearly (5:1 on the paper). */
+  --chilli: #9a463d;
+  --sari: #456847;
+  --line: #e1d5bd;
   /* One flat accent: the yellow of the phones, used like a highlighter. No
      gradients anywhere on the page. */
   --mark: #f9c933;
-  --good: #1f8a4c;
   --warn: #b4540a;
 
   /* One scale for everything (the "premium" design skill's): text sizes,
@@ -74,37 +84,53 @@ html { scroll-padding-top: var(--bar-h); }
   align-items: center;
   gap: var(--sp-6);
   padding: 0 var(--sp-8);
-  /* Frosted, so the page shows through faintly as it passes underneath. */
-  background: color-mix(in srgb, var(--bg) 72%, transparent);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid color-mix(in srgb, var(--line) 60%, transparent);
+  /* A solid dark strip: the top of the poster, nothing showing through. */
+  background: var(--bar-bg);
+  color: var(--bar-ink);
 }
 /* Medium weights throughout, as on Gnani's console: nothing heavy. */
 .brand { display: flex; align-items: center; gap: var(--sp-3); color: inherit; text-decoration: none; border-radius: var(--r-control); }
 .brand .mark { flex: none; width: 44px; height: 44px; }
 .brand .name { display: block; font-size: 24px; font-weight: 600; line-height: 1; letter-spacing: -0.02em; }
 /* Small, tucked under the name, starting where "Maatu" starts. */
-.brand .powered { display: block; margin-top: var(--sp-1); font-size: 12px; font-weight: 500; color: var(--muted); }
+.brand .powered { display: block; margin-top: var(--sp-1); font-size: 12px; font-weight: 500; color: var(--bar-muted); }
 
-.brand:focus-visible, .btn:focus-visible, .badge:focus-visible, .next:focus-visible {
+.brand:focus-visible, .btn:focus-visible, .code-link:focus-visible, .next:focus-visible {
   outline: 2px solid var(--ink);
   outline-offset: 2px;
 }
+.brand:focus-visible { outline-color: var(--bar-ink); }
 
+/* Which mode the server is in. Mock mode is a quiet outlined chip with an
+   empty ring; live mode turns sari green with a light that breathes, so paid
+   calls are never on without it being obvious. */
 .pill {
   flex: none;
   margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
   padding: var(--sp-2) var(--sp-3);
-  border-radius: var(--r-pill);
+  border-radius: var(--r-control);
   font-size: var(--fs-sm);
-  font-weight: 600;
+  font-weight: 500;
   line-height: 1;
-  background: var(--surface);
-  border: 1px solid var(--line);
-  color: var(--muted);
+  border: 1px solid color-mix(in srgb, var(--bar-ink) 30%, transparent);
+  color: var(--bar-muted);
 }
-.pill.live { background: var(--good); border-color: var(--good); color: #fff; }
+.pill.live { background: var(--sari); border-color: var(--sari); color: var(--bar-ink); }
+.pill::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 1.5px solid currentColor;
+}
+.pill.live::before { background: #b9e08a; border-color: #b9e08a; }
+@media (prefers-reduced-motion: no-preference) {
+  .pill.live::before { animation: breathe 1.6s ease-in-out infinite; }
+}
+@keyframes breathe { 50% { opacity: 0.35; } }
 
 /* ---- Screens ------------------------------------------------------------------ */
 
@@ -148,6 +174,7 @@ html { scroll-padding-top: var(--bar-h); }
 }
 /* While one word melts into the next they sit on top of each other. */
 .giant .word { grid-area: 1 / 1; }
+.giant .baseline { display: inline-block; width: 0; height: 0; }
 .filters { position: absolute; }
 .giant.morphing { filter: url(#melt) blur(0.6px); }
 /* All five people stand on the same spot, centred, chest on the bottom edge;
@@ -203,17 +230,17 @@ html { scroll-padding-top: var(--bar-h); }
     overflow: clip;
   }
   .hero-visual { position: absolute; inset: 0; height: auto; }
-  /* The person and the word fill the bottom 43%; the headline gets the room
+  /* The person and the word fill the bottom 47%; the headline gets the room
      above. The word starts just above the head, so the head overlaps it and
      it sits behind them. */
-  .giant { top: 57%; font-size: min(18vh, 182px); }
-  .person { height: 41%; }
+  .giant { top: 53%; font-size: min(19.8vh, 200px); }
+  .person { height: 45%; }
   /* The headline, centred in the space between the top bar and the word. */
   .hero .hero-copy {
     position: absolute;
     z-index: 2;
     inset: 0 0 auto;
-    height: 57%;
+    height: 53%;
     max-width: none;
     padding: var(--bar-h) var(--sp-8) 0;
     display: flex;
@@ -236,14 +263,14 @@ html { scroll-padding-top: var(--bar-h); }
   letter-spacing: -0.035em;
   text-wrap: balance;
 }
-/* "their language." gets a yellow highlighter stroke that swipes in. */
-.mark {
+/* The headline's last word gets a yellow highlighter stroke that swipes in. */
+h1 .mark {
   background: linear-gradient(var(--mark), var(--mark)) no-repeat 0 88% / 100% 0.3em;
   -webkit-box-decoration-break: clone;
   box-decoration-break: clone;
 }
 @media (prefers-reduced-motion: no-preference) {
-  .mark { animation: swipe 0.7s 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+  h1 .mark { animation: swipe 0.7s 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
 }
 @keyframes swipe { from { background-size: 0% 0.3em; } }
 .lede { margin: var(--sp-6) 0 0; max-width: 44ch; font-size: var(--fs-lg); line-height: 1.55; color: var(--muted); }
@@ -261,26 +288,6 @@ html { scroll-padding-top: var(--bar-h); }
 }
 .btn.primary { background: var(--ink); color: var(--bg); }
 .btn.primary:hover { transform: translateY(-1px); box-shadow: 0 8px 20px -10px rgb(20 20 30 / 0.5); }
-
-/* "Get it on GitHub", shaped like an app-store badge. */
-.badge {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--sp-3);
-  height: 56px;
-  padding: 0 var(--sp-6) 0 var(--sp-4);
-  border-radius: var(--r-btn);
-  background: #0d1117;
-  color: #fff;
-  text-decoration: none;
-  box-shadow: 0 0 0 1px rgb(255 255 255 / 0.12) inset;
-  transition: transform 0.2s;
-}
-.badge:hover { transform: translateY(-1px); }
-.badge span { display: grid; font-size: 20px; font-weight: 600; line-height: 1; letter-spacing: -0.01em; }
-.badge small { font-size: 12px; font-weight: 500; letter-spacing: 0.02em; margin-bottom: 2px; opacity: 0.85; }
-.badge.small { height: 44px; }
-.badge.small span { font-size: 16px; }
 
 /* A nudge towards the demo, bobbing gently at the bottom of the hero. */
 .next {
@@ -308,6 +315,9 @@ html { scroll-padding-top: var(--bar-h); }
   .hero-visual, .hero-copy > * { animation: rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
   .hero-copy > :nth-child(2) { animation-delay: 0.08s; }
   .hero-copy > :nth-child(3) { animation-delay: 0.16s; }
+}
+/* Phones move the phones themselves (see the end of this file), so they skip this. */
+@media (prefers-reduced-motion: no-preference) and (min-width: 801px) {
   .js .demo .device, .js .demo .route, .js .demo .folds { opacity: 0; transform: translateY(24px); transition: opacity 0.7s, transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1); }
   .js .demo .rider { transition-delay: 0.08s; }
   .js .demo .route, .js .demo .folds { transition-delay: 0.16s; }
@@ -330,14 +340,20 @@ html { scroll-padding-top: var(--bar-h); }
 }
 
 .device { margin: 0; }
+/* The eyebrow over each phone: centred, in a mono face so it reads as a
+   label rather than a heading, with only a little tracking. */
 .device figcaption {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
   font-size: var(--fs-sm);
-  font-weight: 600;
-  letter-spacing: 0.08em;
+  font-weight: 500;
+  letter-spacing: 0.02em;
   text-transform: uppercase;
+  text-align: center;
   color: var(--muted);
-  margin: 0 0 var(--sp-2) var(--sp-2);
+  margin: 0 0 var(--sp-2);
 }
+.device.cust figcaption { color: var(--chilli); }
+.device.rider figcaption { color: var(--sari); }
 .device iframe {
   display: block;
   width: 360px;
@@ -374,21 +390,40 @@ html { scroll-padding-top: var(--bar-h); }
 .step { display: grid; grid-template-columns: minmax(0, 192px) minmax(40px, 1fr) 72px; align-items: center; gap: var(--sp-3); font-size: var(--fs-sm); color: var(--muted); }
 .bar { height: 6px; border-radius: var(--r-pill); background: var(--line); overflow: hidden; }
 .bar i { display: block; height: 100%; background: var(--ink); border-radius: var(--r-pill); }
+/* Each entry takes the sender's colour: a dot by its title, and its bars. */
+.log .title::before { content: ''; display: inline-block; width: 8px; height: 8px; margin-right: var(--sp-2); border-radius: 50%; background: var(--ink); vertical-align: 1px; }
+.log .from-customer .title::before, .log .from-customer .bar i { background: var(--chilli); }
+.log .from-rider .title::before, .log .from-rider .bar i { background: var(--sari); }
 .ms { text-align: right; font-variant-numeric: tabular-nums; color: var(--ink); }
-.total { font-size: var(--fs-sm); color: var(--good); font-weight: 600; }
+.total { font-size: var(--fs-sm); color: var(--ink); font-weight: 600; }
 .total.warn { color: var(--warn); }
 
-pre {
-  margin: var(--sp-3) 0 0;
-  padding: var(--sp-3);
-  border-radius: var(--r-control);
-  background: var(--bg);
-  overflow-x: auto;
+.panel, .device { min-width: 0; }
+
+/* "See the code on GitHub": a yellow pill like the phones' mic button, since
+   yellow is the colour of things you press. */
+.code-link {
+  justify-self: center;
+  align-self: end;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  height: 44px;
+  padding: 0 var(--sp-4);
+  border-radius: var(--r-pill);
+  background: var(--mark);
   font-size: var(--fs-sm);
-  line-height: 1.5;
+  font-weight: 600;
+  color: var(--ink);
+  text-decoration: none;
+}
+.code-link:hover { transform: translateY(-1px); box-shadow: 0 8px 20px -10px rgb(120 90 0 / 0.6); }
+@media (prefers-reduced-motion: no-preference) {
+  .code-link { transition: transform 0.2s, box-shadow 0.2s; }
 }
 
-.panel, .device { min-width: 0; }
+/* The flip between the two phones; phones only. */
+.switch { display: none; }
 
 /* ---- Route between the phones ---------------------------------------------- */
 
@@ -450,8 +485,8 @@ pre {
   .stage {
     height: calc(var(--sp-4) + 24px + var(--sp-2) + var(--phone-h) + var(--sp-8));
     grid-template-columns: 360px minmax(320px, 1fr) 360px;
-    grid-template-rows: auto minmax(0, 1fr);
-    grid-template-areas: "cust route rider" "cust folds rider";
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    grid-template-areas: "cust route rider" "cust folds rider" "cust code rider";
     column-gap: 56px;
   }
   .device figcaption { line-height: 24px; }
@@ -461,13 +496,12 @@ pre {
   .panel { display: contents; }
   .folds { grid-area: folds; height: 100%; min-height: 0; display: flex; flex-direction: column; gap: var(--sp-6); }
   .folds .fold { flex: 0 1 auto; min-height: 0; overflow: auto; }
-  /* "Get it on GitHub" sits in the bottom-right of the middle column. */
-  .folds .badge { flex: none; align-self: flex-end; margin-top: auto; }
+  /* "See the code on GitHub" sits at the bottom of the middle column. */
+  .code-link { grid-area: code; margin-top: var(--sp-6); }
 }
 
 @media (max-width: 1200px) {
   .folds { display: grid; gap: var(--sp-6); }
-  .folds .badge { justify-self: end; }
   .demo { padding-top: calc(var(--bar-h) + var(--sp-4)); }
   .stage { grid-template-columns: repeat(2, minmax(0, 360px)); justify-content: center; }
   .device iframe { width: 100%; }
@@ -475,14 +509,93 @@ pre {
 }
 
 @media (max-width: 800px) {
-  .stage { grid-template-columns: minmax(0, 360px); }
-  .hero { padding: calc(var(--bar-h) + var(--sp-6)) var(--sp-4) 88px; }
-  /* Phones: the word at the top, the person centred in front of it. */
-  .hero-visual { height: 480px; }
-  .giant { top: 120px; }
-  .person { height: 66%; }
   .topbar { padding: 0 var(--sp-4); gap: var(--sp-3); }
   .brand .powered { display: none; }
+
+  /* Phones: the hero is exactly one screen. The words at the top, and the
+     word and the person fill the rest, chest on the bottom edge. */
+  .hero {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    height: 100dvh;
+    min-height: 560px;
+    padding: calc(var(--bar-h) + var(--sp-6)) var(--sp-4) 0;
+    overflow: clip;
+  }
+  .hero-visual { flex: 1; height: auto; min-height: 300px; }
+  .giant { top: 6%; }
+  .person { height: 78%; }
+  .hero .next { z-index: 2; left: auto; right: var(--sp-4); margin-left: 0; }
+
+  /* One phone at a time, filling the screen under the top bar and the
+     switch. The other one waits below, and slides up over this one when a
+     message reaches it. The pipeline is further down. */
+  /* No room for the top bar here: the page's scroll padding already keeps it clear. */
+  .demo { padding-top: 0; overflow: clip; }
+  .stage {
+    grid-template-columns: minmax(0, 360px);
+    grid-template-areas: "switch" "phones" "panel" "code";
+    row-gap: var(--sp-3);
+    padding-top: var(--sp-3);
+  }
+  .switch {
+    grid-area: switch;
+    display: flex;
+    gap: var(--sp-1);
+    position: relative;
+    padding: var(--sp-1);
+    border-radius: var(--r-pill);
+    background: var(--surface);
+    box-shadow: 0 0 0 1px var(--line);
+  }
+  /* A green thumb behind the chosen tab, sliding across when it changes. */
+  .switch::before {
+    content: '';
+    position: absolute;
+    top: var(--sp-1);
+    bottom: var(--sp-1);
+    left: var(--sp-1);
+    width: calc((100% - 3 * var(--sp-1)) / 2);
+    border-radius: var(--r-pill);
+    background: var(--sari);
+  }
+  .stage.on-rider .switch::before { transform: translateX(calc(100% + var(--sp-1))); }
+  .switch button {
+    flex: 1;
+    height: 36px;
+    border: 0;
+    border-radius: var(--r-pill);
+    position: relative;
+    background: none;
+    font: inherit;
+    font-size: var(--fs-sm);
+    font-weight: 600;
+    color: var(--muted);
+    cursor: pointer;
+  }
+  .switch button[aria-selected="true"] { color: var(--bar-ink); }
+  .switch button:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+  /* The phone keeps its real shape and shrinks as one piece, screen and all,
+     instead of getting squashed: stage.js sets --s so it fits under the
+     switch. The switch matches its width. */
+  .device { grid-area: phones; justify-self: center; width: calc(360px * var(--s, 1)); height: calc(var(--phone-h) * var(--s, 1)); }
+  .device figcaption { display: none; }
+  .device iframe { width: 360px; height: var(--phone-h); transform: scale(var(--s, 1)); transform-origin: 0 0; }
+  .switch { justify-self: center; width: calc(360px * var(--s, 1)); }
+  .device.rider { z-index: 2; }
+  .stage:not(.on-rider) .device.rider,
+  .stage.on-rider .device.cust { opacity: 0; pointer-events: none; }
+  .stage:not(.on-rider) .device.rider { transform: translateY(calc(100% + var(--sp-8))); }
+  .stage.on-rider .device.cust { transform: scale(0.94); }
+  .panel { grid-area: panel; justify-self: center; width: calc(360px * var(--s, 1)); margin-top: var(--sp-6); }
+  .code-link { grid-area: code; margin: var(--sp-6) 0 var(--sp-4); }
+}
+@media (max-width: 800px) and (prefers-reduced-motion: no-preference) {
+  .device { transition: transform 0.5s cubic-bezier(0.2, 0.7, 0.2, 1), opacity 0.4s; }
+  /* The thumb moves with the phones, with a soft settle at the end. */
+  .switch::before { transition: transform 0.45s cubic-bezier(0.3, 1.3, 0.5, 1); }
+  .switch button { transition: color 0.25s; }
 }
 
 @media (max-width: 420px) {
@@ -490,5 +603,4 @@ pre {
   .brand .mark { width: 36px; height: 36px; }
 
   .stage { padding: var(--sp-3) var(--sp-4) var(--sp-6); }
-  .device iframe { width: 100%; border-width: 6px; }
 }

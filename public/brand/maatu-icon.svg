@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 6.1 51 51" width="64" height="64">
+  <title>Maatu</title>
+  <!-- The browser-tab icon. At 16px the three dots of maatu-mark.svg shrink
+       to specks, so this keeps the bubble with a thicker line and one big
+       dot inside it. -->
+  <path d="M22.51 48.54L12.03 54.29Q8 56.5 8.5 51.93L10.44 34.16Z" fill="#b4594f"/>
+  <path d="M44 6.25H30A23.75 23.75 0 0 0 30 53.75H44A2.2 2.2 0 0 0 44 49.35Q41 49.35 38 48.63L26.21 45.8A16.25 16.25 0 0 1 26.21 14.2L38 11.37Q41 10.65 44 10.65A2.2 2.2 0 0 0 44 6.25Z" fill="#b4594f"/>
+  <rect x="27.75" y="25.75" width="8.5" height="8.5" rx="1.8" transform="rotate(45 32 30)" fill="#fbb040"/>
+</svg>

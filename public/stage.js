@@ -79,6 +79,47 @@ const STEPS = [
 ];
 const SCALE_MS = 1500; // a full bar
 
+// ---- Phones: one phone at a time --------------------------------------------
+// Only one of the two fits on a phone, so when a message reaches the other
+// person their phone slides up, as if it just buzzed in their pocket.
+
+const narrow = matchMedia('(max-width: 800px)');
+const HANDOVER_MS = 700; // let the sender see their message go first
+const tabs = document.querySelectorAll('.switch button');
+const phones = { cust: stage.querySelector('.device.cust'), rider: stage.querySelector('.device.rider') };
+let onScreen = 'cust';
+function showPhone(which) {
+  onScreen = which;
+  stage.classList.toggle('on-rider', which === 'rider');
+  for (const tab of tabs) tab.setAttribute('aria-selected', String(tab.dataset.show === which));
+  // The hidden phone can't be reached with the keyboard either.
+  phones.cust.inert = narrow.matches && which !== 'cust';
+  phones.rider.inert = narrow.matches && which !== 'rider';
+}
+for (const tab of tabs) tab.addEventListener('click', () => showPhone(tab.dataset.show));
+narrow.addEventListener('change', () => showPhone(onScreen));
+showPhone('cust');
+
+// The phone shrinks as one piece, screen and all, to fit under the top bar
+// and the switch, instead of being squashed to the screen's height.
+const PHONE_W = 360;
+const PHONE_H = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--phone-h'));
+function fitPhones() {
+  if (!narrow.matches) return stage.style.removeProperty('--s');
+  const css = getComputedStyle(stage);
+  const width = stage.clientWidth - parseFloat(css.paddingLeft) - parseFloat(css.paddingRight);
+  const switchBox = document.querySelector('.switch').offsetHeight;
+  const height = innerHeight - topbar.offsetHeight - switchBox - parseFloat(css.paddingTop) - 2 * parseFloat(css.rowGap);
+  stage.style.setProperty('--s', Math.min(1, width / PHONE_W, height / PHONE_H).toFixed(3));
+}
+fitPhones();
+addEventListener('resize', () => requestAnimationFrame(fitPhones));
+
+function handOver(source) {
+  if (!narrow.matches || (source !== 'customer' && source !== 'rider')) return;
+  setTimeout(() => showPhone(source === 'customer' ? 'rider' : 'cust'), HANDOVER_MS);
+}
+
 // Send the orb along the route in the direction the message went.
 const traveller = document.getElementById('traveller');
 function travel(source) {
@@ -108,6 +149,7 @@ let page = 0;
 
 socket.on('log', (entry) => {
   travel(entry.source);
+  handOver(entry.source);
   document.getElementById('logEmpty')?.remove();
   entries.unshift(entry);
   entries.length = Math.min(entries.length, 100);
@@ -144,6 +186,7 @@ function heading(entry) {
 
 function logItem(entry) {
   const li = document.createElement('li');
+  li.className = `from-${entry.source}`;
   const title = document.createElement('div');
   title.className = 'title';
   title.textContent = heading(entry);

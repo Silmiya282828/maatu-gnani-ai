@@ -51,7 +51,7 @@
       <form class="field" id="textForm">
         <input id="text" type="text" autocomplete="off" maxlength="500" aria-label="Message">
         <span class="rec-hint" id="talkLabel" aria-live="polite"></span>
-        <button class="attach" id="attach" type="button" title="Send a recorded audio file" aria-label="Send a recorded audio file">
+        <button class="attach" id="attach" type="button" aria-label="Attachments" aria-expanded="false" aria-controls="egg">
           <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M21 11.5 12.6 20a5.3 5.3 0 0 1-7.5-7.5l8.4-8.4a3.5 3.5 0 0 1 5 5l-8.4 8.4a1.8 1.8 0 0 1-2.5-2.5l7.8-7.8"/></svg>
         </button>
       </form>
@@ -60,8 +60,17 @@
         <svg class="mic" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M12 15a3.5 3.5 0 0 0 3.5-3.5v-6a3.5 3.5 0 0 0-7 0v6A3.5 3.5 0 0 0 12 15Zm6-3.5a1 1 0 1 0-2 0 4 4 0 0 1-8 0 1 1 0 1 0-2 0 6 6 0 0 0 5 5.9V20H9a1 1 0 1 0 0 2h6a1 1 0 1 0 0-2h-2v-2.6a6 6 0 0 0 5-5.9Z"/></svg>
         <svg class="send" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M3.4 20.4 21 12 3.4 3.6 3.4 10l12.6 2-12.6 2z"/></svg>
       </button>
-      <input type="file" id="file" accept="audio/*" hidden>
     </footer>
+
+    <!-- The paperclip has exactly one attachment, and it isn't a voice note. -->
+    <div class="egg" id="egg" role="dialog" aria-label="Attachment" hidden>
+      <div class="file">
+        <span class="doc" aria-hidden="true">PDF</span>
+        <span class="file-name"><b>please_hire_me_FINAL_v3.pdf</b><small>1 page · 0 known bugs</small></span>
+      </div>
+      <p>Speaks every language in this app. Still no word for "you're hired".</p>
+      <button type="button" id="eggClose">Maybe later</button>
+    </div>
   </div>
 
   <script src="/socket.io/socket.io.js"></script>

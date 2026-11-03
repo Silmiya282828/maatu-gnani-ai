@@ -156,29 +156,19 @@ html, body {
 .tag { font-size: var(--fs-sm); color: var(--muted); white-space: nowrap; }
 .bubble.mine .tag { color: var(--mine-sub); }
 
-/* ---- Translating: Gnani-style orbs ---------------------------------------- */
+/* ---- Translating: three dots, like someone typing ----------------------------- */
 
 .thinking { display: flex; align-items: center; gap: var(--sp-2); font-size: var(--fs-sm); color: var(--muted); }
 .bubble.mine .thinking { color: var(--mine-sub); }
 .bubble .main + .thinking { margin-top: var(--sp-2); }
-.orbs { position: relative; flex: none; width: 34px; height: 22px; }
-.orbs i {
-  position: absolute;
-  border-radius: 50%;
-  background:
-    radial-gradient(circle at 62% 22%, #ff9b61 0, transparent 58%),
-    radial-gradient(circle at 22% 50%, #8fe6f8 0, transparent 62%),
-    radial-gradient(circle at 62% 78%, #b48cff 0, transparent 62%),
-    #f3eefc;
-  animation: orb 2.4s ease-in-out infinite;
-}
-.orbs i:nth-child(1) { width: 16px; height: 16px; left: 0; top: 4px; }
-.orbs i:nth-child(2) { width: 11px; height: 11px; left: 15px; top: 0; animation-delay: -0.8s; }
-.orbs i:nth-child(3) { width: 8px; height: 8px; left: 24px; top: 13px; animation-delay: -1.6s; }
+.orbs { display: inline-flex; flex: none; gap: 4px; }
+.orbs i { width: 6px; height: 6px; border-radius: 50%; background: currentColor; animation: hop 1.2s ease-in-out infinite; }
+.orbs i:nth-child(2) { animation-delay: 0.15s; }
+.orbs i:nth-child(3) { animation-delay: 0.3s; }
 
-@keyframes orb {
-  0%, 100% { transform: translateY(0) rotate(0deg) scale(1); }
-  50% { transform: translateY(-3px) rotate(180deg) scale(1.12); }
+@keyframes hop {
+  0%, 60%, 100% { transform: none; opacity: 0.4; }
+  30% { transform: translateY(-4px); opacity: 1; }
 }
 
 /* ---- Quick chat card --------------------------------------------------------- */
@@ -325,6 +315,51 @@ html, body {
 .composer.recording .field { border-color: var(--rec); }
 .composer.recording .talk { background: var(--rec); color: #fff; transform: scale(1.12); }
 
+/* ---- The paperclip's one attachment ---------------------------------------- */
+
+.egg {
+  position: fixed;
+  right: var(--sp-3);
+  bottom: 72px;
+  width: min(300px, calc(100% - 2 * var(--sp-3)));
+  padding: var(--sp-4);
+  border-radius: var(--r-card);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  animation: rise 0.2s ease-out;
+}
+.egg[hidden] { display: none; }
+.file { display: flex; align-items: center; gap: var(--sp-3); }
+.doc {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 48px;
+  border-radius: var(--r-tile);
+  background: #b4594f;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+.file-name { display: grid; min-width: 0; }
+.file-name b { font-size: var(--fs-sm); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.file-name small { font-size: 12px; color: var(--muted); }
+.egg p { margin: var(--sp-3) 0; font-size: var(--fs-sm); line-height: 1.45; }
+.egg button {
+  height: 36px;
+  padding: 0 var(--sp-4);
+  border: 1px solid var(--line);
+  border-radius: var(--r-pill);
+  background: none;
+  font: inherit;
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--ink);
+  cursor: pointer;
+}
+
 button:focus-visible, select:focus-visible { outline: 2px solid var(--link); outline-offset: 2px; }
 
 .notice {
@@ -344,6 +379,6 @@ button:focus-visible, select:focus-visible { outline: 2px solid var(--link); out
 @keyframes pulse { 50% { transform: scale(0.94); } }
 
 @media (prefers-reduced-motion: reduce) {
-  .bubble, .play.playing, .orbs i { animation: none; }
+  .bubble, .play.playing, .orbs i, .egg { animation: none; }
   .chevron { transition: none; }
 }

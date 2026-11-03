@@ -7,7 +7,12 @@
   "scripts": {
     "dev": "node --env-file-if-exists=.env --watch src/server.js",
     "live": "node --env-file=.env src/server.js --live",
+    "start": "node src/server.js",
+    "start:live": "node src/server.js --live",
     "loadtest": "node scripts/loadtest.js"
+  },
+  "engines": {
+    "node": ">=20"
   },
   "dependencies": {
     "express": "^4.21.2",

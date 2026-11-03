@@ -1,28 +1,14 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="5.85 6.25 52 52" width="64" height="64">
   <title>Maatu</title>
-  <!-- A texting bubble (round, top arc eased off, tail swept to the lower
-       left) filled with Gnani's orange / blue / purple orb gradient, with an
-       uneven eight-bar voice wave set slightly above and right of centre. -->
-  <defs>
-    <radialGradient id="ma" cx="68%" cy="20%" r="62%"><stop offset="0" stop-color="#ff9b61"/><stop offset="1" stop-color="#ff9b61" stop-opacity="0"/></radialGradient>
-    <radialGradient id="mb" cx="18%" cy="55%" r="62%"><stop offset="0" stop-color="#8fe6f8"/><stop offset="1" stop-color="#8fe6f8" stop-opacity="0"/></radialGradient>
-    <radialGradient id="mc" cx="66%" cy="86%" r="62%"><stop offset="0" stop-color="#b48cff"/><stop offset="1" stop-color="#b48cff" stop-opacity="0"/></radialGradient>
-    <clipPath id="mk"><path d="M28 5h8a22 22 0 0 1 22 22v4a22 22 0 0 1 -22 22H30c-3 0-5.8-.5-8.4-1.5C18.8 54.4 13.6 59.6 7 59.4c3.2-2.6 5.2-5.8 5.6-9.4A22 22 0 0 1 6 31v-4a22 22 0 0 1 22 -22Z"/></clipPath>
-  </defs>
-  <g clip-path="url(#mk)">
-    <rect width="64" height="64" fill="#f3eefc"/>
-    <rect width="64" height="64" fill="url(#ma)"/>
-    <rect width="64" height="64" fill="url(#mb)"/>
-    <rect width="64" height="64" fill="url(#mc)"/>
-  </g>
-  <g fill="#ffffff">
-    <rect x="17.00" y="24.63" width="2.9" height="6.75" rx="1.45"/>
-    <rect x="21.16" y="21.25" width="2.9" height="13.49" rx="1.45"/>
-    <rect x="25.31" y="23.44" width="2.9" height="9.13" rx="1.45"/>
-    <rect x="29.47" y="18.08" width="2.9" height="19.84" rx="1.45"/>
-    <rect x="33.63" y="22.05" width="2.9" height="11.90" rx="1.45"/>
-    <rect x="37.79" y="20.06" width="2.9" height="15.87" rx="1.45"/>
-    <rect x="41.94" y="24.23" width="2.9" height="7.54" rx="1.45"/>
-    <rect x="46.10" y="25.82" width="2.9" height="4.36" rx="1.45"/>
-  </g>
+  <!-- An open chat bubble, a U on its side, with three dots leaving it. The
+       dots turn from yellow to yellow-green on the way out: the message changing
+       language as it travels. The inner edge is a circle on the same
+       centre as the outer one, so the back keeps one even width; it leaves the
+       circle on a straight tangent that narrows each arm to a round tip. The
+       tail's point is rounded off, so nothing ends sharp. Flat colours only. -->
+  <path d="M22.51 48.54L12.03 54.29Q8 56.5 8.5 51.93L10.44 34.16Z" fill="#b4594f"/>
+  <path d="M44 7.2H30A22.8 22.8 0 0 0 30 52.8H44A1.6 1.6 0 0 0 44 49.6Q41 49.6 38 49.03L26.78 46.9A17.2 17.2 0 0 1 26.78 13.1L38 10.97Q41 10.4 44 10.4A1.6 1.6 0 0 0 44 7.2Z" fill="#b4594f"/>
+  <rect x="24.2" y="27.2" width="5.6" height="5.6" rx="1.3" transform="rotate(45 27 30)" fill="#fbb040"/>
+  <rect x="37.2" y="27.2" width="5.6" height="5.6" rx="1.3" transform="rotate(45 40 30)" fill="#c9ae31"/>
+  <rect x="50.2" y="27.2" width="5.6" height="5.6" rx="1.3" transform="rotate(45 53 30)" fill="#93a843"/>
 </svg>
