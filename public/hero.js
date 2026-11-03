@@ -98,7 +98,7 @@ function shape(p) {
 function measure() {
   const base = parseFloat(getComputedStyle(giant).fontSize);
   // On wide screens it stays a little wider than the person.
-  const room = wide.matches ? Math.min(visual.clientWidth * 0.352, 554) : visual.clientWidth;
+  const room = wide.matches ? Math.min(visual.clientWidth * 0.387, 609) : visual.clientWidth;
   const m = PEOPLE.map(shape);
   const tall = (x) => x.top - x.bottom;
   // The usual letter height, unless the widest word would then not fit.

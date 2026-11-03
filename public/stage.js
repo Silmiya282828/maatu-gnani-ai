@@ -178,10 +178,15 @@ function renderLog() {
   fitToScreen();
 }
 
+// Two lines, so each reads at a glance: who sent it to whom, then what it
+// was and which languages it went between.
 function heading(entry) {
-  const who = entry.source === 'api' ? 'API call' : entry.source === 'customer' ? 'Customer → Rider' : 'Rider → Customer';
-  const typed = entry.kind === 'text' ? ' · typed' : '';
-  return `${who}${typed} · ${languages[entry.from_lang]?.name} → ${languages[entry.to_lang]?.name}`;
+  return entry.source === 'api' ? 'API call' : entry.source === 'customer' ? 'Customer to rider' : 'Rider to customer';
+}
+
+function routeNote(entry) {
+  const kind = entry.kind === 'text' ? 'Typed' : 'Voice note';
+  return `${kind} · ${languages[entry.from_lang]?.name} → ${languages[entry.to_lang]?.name}`;
 }
 
 function logItem(entry) {
@@ -190,7 +195,10 @@ function logItem(entry) {
   const title = document.createElement('div');
   title.className = 'title';
   title.textContent = heading(entry);
-  li.append(title, ...stepRows(entry), totalLine(entry));
+  const note = document.createElement('div');
+  note.className = 'route-note';
+  note.textContent = routeNote(entry);
+  li.append(title, note, ...stepRows(entry), totalLine(entry));
   return li;
 }
 

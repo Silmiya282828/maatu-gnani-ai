@@ -25,7 +25,6 @@
   /* One flat accent: the yellow of the phones, used like a highlighter. No
      gradients anywhere on the page. */
   --mark: #f9c933;
-  --warn: #b4540a;
 
   /* One scale for everything (the "premium" design skill's): text sizes,
      spacing steps and corner radii. Nothing on the page uses a value off it,
@@ -230,17 +229,17 @@ html { scroll-padding-top: var(--bar-h); }
     overflow: clip;
   }
   .hero-visual { position: absolute; inset: 0; height: auto; }
-  /* The person and the word fill the bottom 47%; the headline gets the room
+  /* The person and the word fill the bottom 51%; the headline gets the room
      above. The word starts just above the head, so the head overlaps it and
      it sits behind them. */
-  .giant { top: 53%; font-size: min(19.8vh, 200px); }
-  .person { height: 45%; }
+  .giant { top: 49%; font-size: min(21.8vh, 220px); }
+  .person { height: 49.5%; }
   /* The headline, centred in the space between the top bar and the word. */
   .hero .hero-copy {
     position: absolute;
     z-index: 2;
     inset: 0 0 auto;
-    height: 53%;
+    height: 49%;
     max-width: none;
     padding: var(--bar-h) var(--sp-8) 0;
     display: flex;
@@ -387,6 +386,8 @@ h1 .mark {
 .log li { display: grid; gap: var(--sp-2); padding-bottom: var(--sp-4); border-bottom: 1px solid var(--line); }
 .log li:last-child { border-bottom: 0; padding-bottom: 0; }
 .title { font-weight: 500; font-size: var(--fs-md); }
+/* What kind of message, and from which language into which, under the title. */
+.route-note { margin-top: calc(-1 * var(--sp-1)); font-size: var(--fs-sm); color: var(--muted); }
 .step { display: grid; grid-template-columns: minmax(0, 192px) minmax(40px, 1fr) 72px; align-items: center; gap: var(--sp-3); font-size: var(--fs-sm); color: var(--muted); }
 .bar { height: 6px; border-radius: var(--r-pill); background: var(--line); overflow: hidden; }
 .bar i { display: block; height: 100%; background: var(--ink); border-radius: var(--r-pill); }
@@ -395,8 +396,9 @@ h1 .mark {
 .log .from-customer .title::before, .log .from-customer .bar i { background: var(--chilli); }
 .log .from-rider .title::before, .log .from-rider .bar i { background: var(--sari); }
 .ms { text-align: right; font-variant-numeric: tabular-nums; color: var(--ink); }
-.total { font-size: var(--fs-sm); color: var(--ink); font-weight: 600; }
-.total.warn { color: var(--warn); }
+/* Delivered in green, a failure in red. */
+.total { font-size: var(--fs-sm); color: var(--sari); font-weight: 600; }
+.total.warn { color: var(--chilli); }
 
 .panel, .device { min-width: 0; }
 
