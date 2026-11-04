@@ -110,18 +110,32 @@ showPhone('cust');
 
 // The phone shrinks as one piece, screen and all, to fit under the top bar
 // and the switch, instead of being squashed to the screen's height.
+//
+// On a real phone the screen's height keeps changing: the address bar slides
+// away when you scroll, and the keyboard takes half the screen when you type.
+// Refitting on each of those made the phone jump in size. So it fits to the
+// smallest height (address bar showing, 100svh) and only refits when the
+// width changes, which means the phone was turned sideways.
 const PHONE_W = 360;
 const PHONE_H = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--phone-h'));
+const probe = Object.assign(document.createElement('div'), { ariaHidden: 'true' });
+probe.style.cssText = 'position:fixed;top:0;left:0;width:0;height:100vh;height:100svh;visibility:hidden;pointer-events:none';
+document.body.append(probe);
 function fitPhones() {
   if (!narrow.matches) return stage.style.removeProperty('--s');
   const css = getComputedStyle(stage);
   const width = stage.clientWidth - parseFloat(css.paddingLeft) - parseFloat(css.paddingRight);
   const switchBox = document.querySelector('.switch').offsetHeight;
-  const height = innerHeight - topbar.offsetHeight - switchBox - parseFloat(css.paddingTop) - 2 * parseFloat(css.rowGap);
+  const height = probe.offsetHeight - topbar.offsetHeight - switchBox - parseFloat(css.paddingTop) - 2 * parseFloat(css.rowGap);
   stage.style.setProperty('--s', Math.min(1, width / PHONE_W, height / PHONE_H).toFixed(3));
 }
 fitPhones();
-addEventListener('resize', () => requestAnimationFrame(fitPhones));
+let fittedWidth = innerWidth;
+addEventListener('resize', () => {
+  if (innerWidth === fittedWidth) return; // only the height moved: keep the size
+  fittedWidth = innerWidth;
+  requestAnimationFrame(fitPhones);
+});
 
 function handOver(source) {
   if (!narrow.matches || (source !== 'customer' && source !== 'rider')) return;
