@@ -135,7 +135,10 @@ socket.on('connect', () => socket.emit('monitor'));
 socket.on('mode', (providers) => {
   const mock = providers.stt === 'mock';
   const pill = document.getElementById('mode');
-  pill.textContent = mock ? 'mock mode · no credits used' : 'live · Gnani Prisma + Timbre';
+  // The part after the dot is dropped on phones, where the top bar is narrow.
+  const [name, more] = mock ? ['mock mode', 'no credits used'] : ['live', 'Gnani Prisma + Timbre'];
+  const extra = Object.assign(document.createElement('span'), { className: 'more', textContent: ` · ${more}` });
+  pill.replaceChildren(name, extra);
   pill.classList.toggle('live', !mock);
 });
 
