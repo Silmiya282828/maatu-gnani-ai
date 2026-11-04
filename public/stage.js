@@ -7,6 +7,14 @@ for (const end of document.querySelectorAll('.route .end')) {
 
 document.documentElement.classList.add('js');
 
+// This page's own ride, so two visitors never share a chat. The phones load
+// once they know it.
+// randomUUID only exists on https and localhost, where the mic works anyway.
+const rideId = crypto.randomUUID?.() ?? Math.random().toString(36).slice(2);
+for (const frame of document.querySelectorAll('.device iframe')) {
+  frame.src = `${frame.dataset.src}&ride=${rideId}`;
+}
+
 // On a laptop the browser window is often only ~600px tall, too short for two
 // 720px phones. Instead of making people zoom out by hand, shrink the demo
 // until it fits under the top bar, like a slide. The top bar and the hero keep
@@ -130,7 +138,7 @@ function travel(source) {
 }
 
 const socket = io();
-socket.on('connect', () => socket.emit('monitor'));
+socket.on('connect', () => socket.emit('monitor', { rideId }));
 
 socket.on('mode', (providers) => {
   const mock = providers.stt === 'mock';
@@ -184,7 +192,7 @@ function renderLog() {
 // Two lines, so each reads at a glance: who sent it to whom, then what it
 // was and which languages it went between.
 function heading(entry) {
-  return entry.source === 'api' ? 'API call' : entry.source === 'customer' ? 'Customer to rider' : 'Rider to customer';
+  return entry.source === 'customer' ? 'Customer to rider' : 'Rider to customer';
 }
 
 function routeNote(entry) {

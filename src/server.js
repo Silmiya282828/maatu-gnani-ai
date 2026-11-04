@@ -33,7 +33,6 @@ app.post('/v1/voice-messages', requireClientKey, upload.single('audio'), async (
   if (problem) return res.status(400).json({ error: problem });
 
   const result = await translateVoiceMessage({ audio: toAudio(req.file), fromLang, toLang });
-  publishToMonitor(result, 'api');
   res.json(result);
 });
 
@@ -43,7 +42,6 @@ app.post('/v1/text-messages', requireClientKey, express.json(), async (req, res)
   if (problem) return res.status(400).json({ error: problem });
 
   const result = await translateTextMessage({ text: text.trim(), fromLang, toLang });
-  publishToMonitor(result, 'api');
   res.json(result);
 });
 
@@ -59,11 +57,16 @@ app.get('/health', (_req, res) => {
 // POST /v1/voice-messages above.
 // ---------------------------------------------------------------------------
 
+// Every visitor to the demo page gets their own ride, with a random id made
+// in their browser, so nobody sees anyone else's messages.
 const ROLES = ['customer', 'rider'];
+const MAX_RIDES = 2000; // the oldest are forgotten after this many
+const RIDE_ID = /^[A-Za-z0-9-]{1,64}$/;
 const rides = new Map();
 
 function getRide(rideId) {
   if (!rides.has(rideId)) {
+    if (rides.size >= MAX_RIDES) rides.delete(rides.keys().next().value);
     rides.set(rideId, { customer: { lang: 'kn-IN' }, rider: { lang: 'te-IN' } });
   }
   return rides.get(rideId);
@@ -71,15 +74,16 @@ function getRide(rideId) {
 
 io.on('connection', (socket) => {
   socket.on('join', ({ rideId, role, lang } = {}) => {
-    if (typeof rideId !== 'string' || !ROLES.includes(role)) return;
+    if (typeof rideId !== 'string' || !RIDE_ID.test(rideId) || !ROLES.includes(role)) return;
     const ride = getRide(rideId);
     if (isLanguage(lang)) ride[role].lang = lang;
     socket.join(`ride:${rideId}`);
     io.to(`ride:${rideId}`).emit('ride', ride);
   });
 
-  socket.on('monitor', () => {
-    socket.join('monitor');
+  // The pipeline panel only follows its own page's ride.
+  socket.on('monitor', ({ rideId } = {}) => {
+    if (typeof rideId === 'string' && RIDE_ID.test(rideId)) socket.join(`monitor:${rideId}`);
     socket.emit('mode', providers);
   });
 });
@@ -87,6 +91,7 @@ io.on('connection', (socket) => {
 app.post('/demo/rides/:rideId/messages', upload.single('audio'), async (req, res) => {
   const { role, client_id: clientId, text, text_lang: textLang } = req.body;
   if (!ROLES.includes(role)) return res.status(400).json({ error: 'role must be customer or rider' });
+  if (!RIDE_ID.test(req.params.rideId)) return res.status(400).json({ error: 'Unknown ride' });
 
   const ride = getRide(req.params.rideId);
   const toLang = ride[role === 'customer' ? 'rider' : 'customer'].lang;
@@ -107,7 +112,7 @@ app.post('/demo/rides/:rideId/messages', upload.single('audio'), async (req, res
   }
   const message = { ...result, from_role: role, client_id: clientId };
   io.to(`ride:${req.params.rideId}`).emit('message', message);
-  publishToMonitor(result, role);
+  publishToMonitor(result, role, req.params.rideId);
   res.json(message);
 });
 
@@ -132,8 +137,8 @@ function toAudio(file) {
   return { buffer: file.buffer, mimetype: file.mimetype, filename: file.originalname || 'message.wav' };
 }
 
-function publishToMonitor(result, source) {
-  io.to('monitor').emit('log', { ...result, source, at: Date.now() });
+function publishToMonitor(result, source, rideId) {
+  io.to(`monitor:${rideId}`).emit('log', { ...result, source, at: Date.now() });
 }
 
 server.listen(config.port, () => {
