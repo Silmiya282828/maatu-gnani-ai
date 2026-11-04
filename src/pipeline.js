@@ -83,7 +83,15 @@ async function deliver({ id, kind, fromLang, toLang, originalAudioUrl, getText }
   };
 
   try {
-    result.original_text = kind === 'voice' ? await timed(timings, 'stt', getText) : await getText();
+    if (kind === 'voice') {
+      // Speech-to-text also says which language was spoken, which can differ
+      // from the one the sender picked (a Kannada speaker sending English).
+      const heard = await timed(timings, 'stt', getText);
+      result.original_text = heard.text;
+      result.from_lang = fromLang = heard.lang;
+    } else {
+      result.original_text = await getText();
+    }
 
     if (fromLang === toLang) {
       result.translated_text = result.original_text;

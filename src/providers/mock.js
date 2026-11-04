@@ -103,7 +103,7 @@ const wait = (min, max) => new Promise((r) => setTimeout(r, min + Math.random() 
 export async function transcribe(_audio, lang) {
   await wait(150, 350);
   const line = CONVERSATION[turn++ % CONVERSATION.length];
-  return line[lang] ?? line['en-IN'];
+  return line[lang] ? { text: line[lang], lang } : { text: line['en-IN'], lang: 'en-IN' };
 }
 
 export async function translate(text, fromLang, toLang) {

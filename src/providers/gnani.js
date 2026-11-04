@@ -1,5 +1,5 @@
 import { config } from '../config.js';
-import { LANGUAGES } from '../languages.js';
+import { LANGUAGES, isLanguage } from '../languages.js';
 import { spendGnaniCall } from '../budget.js';
 import { fixWavLengths } from '../wav.js';
 
@@ -16,6 +16,9 @@ const TIMEOUT_MS = 15000;
 // more try on v2.5.
 const STT_MODELS = ['prisma-v3.0', null]; // null: the endpoint's default, v2.5
 
+// Returns { text, lang }. v3.0 hears which language was actually spoken, so a
+// Kannada customer who switches to English still gets translated from English.
+// v2.5 doesn't say, so we keep the language the person picked.
 export async function transcribe(audio, lang) {
   for (const [i, model] of STT_MODELS.entries()) {
     const last = i === STT_MODELS.length - 1;
@@ -55,7 +58,14 @@ async function transcribeWith(model, audio, lang) {
     const err = new Error(`Prisma STT (${model ?? 'v2.5'}) failed (${res.status}): ${JSON.stringify(body.error ?? body)}`);
     throw Object.assign(err, { retry: res.status >= 500 });
   }
-  return body.transcript;
+  return { text: body.transcript, lang: spokenLanguage(body.detected_language_code) ?? lang };
+}
+
+// "en-IN" or "en" -> "en-IN"; anything we don't support -> null.
+function spokenLanguage(code) {
+  if (typeof code !== 'string') return null;
+  const full = code.includes('-') ? code : `${code}-IN`;
+  return isLanguage(full) ? full : null;
 }
 
 // Timbre speech: returns the raw WAV bytes.
