@@ -70,10 +70,13 @@ multipart: audio (wav/mp3/ogg/flac/aac/m4a, ≤ 30 s), from_lang, to_lang
   "translated_text": "నేను గేట్ నంబర్ 2 దగ్గర నిలబడి ఉన్నాను",
   "audio_url": "/v1/audio/<hash>.wav",
   "fallback": false,
+  "censored": false,
   "cached": { "translate": false, "tts": false },
   "timings_ms": { "stt": 212, "translate": 380, "tts": 301, "total": 897 }
 }
 ```
+
+Curse words are starred in both texts ("f***") and left out of the spoken audio. `censored: true` means one was caught, so don't play `original_audio_url` to the other person.
 
 Typed messages and quick chats ("Are you coming?") skip speech-to-text but still arrive as speech:
 
