@@ -2,6 +2,8 @@
 
 *Maatu (ಮಾತು) is Kannada for "talk". In Telugu it's maata (మాట). Same word, two languages.*
 
+**[Read the one-page pitch →](PITCH.md)**
+
 A ride-app customer speaks Kannada and the rider speaks Telugu. They send each other voice notes, and each one arrives **as speech and text in the listener's own language**. The rider hears the message instead of reading it on the bike.
 
 ![Maatu's first screen: "Speak it in your language, hear it in theirs."](docs/hero.jpg)
